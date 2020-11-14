@@ -48,3 +48,21 @@ get_filename_component(CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../" ABSOLUTE
 get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
+
+list(APPEND CORE_SOURCE_FILES src/core/game_state_generator.cpp)
+
+list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES})
+
+list(APPEND TEST_FILES tests/game_state_generator_tests.cpp)
+
+ci_make_app(
+        APP_NAME    dig-dug-test
+        CINDER_PATH ${CINDER_PATH}
+        SOURCES     tests/test_main.cpp ${SOURCE_FILES} ${TEST_FILES}
+        INCLUDES    include
+        LIBRARIES   catch2
+)
+
+if(MSVC)
+    set_property(TARGET dig-dug-test APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
+endif()
