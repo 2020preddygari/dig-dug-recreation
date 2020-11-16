@@ -3,10 +3,15 @@
 namespace dig_dug {
 
 vector<vector<TileType>> GameStateGenerator::Generate() {
+  game_map_.clear();
   const size_t kMaxEnemies = 8;
+  const size_t kMaxLevelWithAdditionalEnemy = 10;
+  const size_t kMinRocks = 3;
   // Formula for calculating number of enemies using level
   size_t num_enemies;
-  if (level_ <= 10) {
+  // 3 or 4 rocks
+  size_t num_rocks = (rand() % 2) + kMinRocks;
+  if (level_ <= kMaxLevelWithAdditionalEnemy) {
     num_enemies = static_cast<int>((level_ - 1) / 2) + 4;
   } else {
     num_enemies = kMaxEnemies;
@@ -24,6 +29,7 @@ vector<vector<TileType>> GameStateGenerator::Generate() {
   }
 
   GenerateEnemies(num_enemies);
+  GenerateRocks(num_rocks);
 
   return game_map_;
 
@@ -108,6 +114,25 @@ void GameStateGenerator::GenerateEnemies(size_t num_enemies) {
           }
         }
       }
+    }
+  }
+}
+
+void GameStateGenerator::GenerateRocks(size_t num_rocks) {
+  for (size_t num = 0; num < num_rocks; num++) {
+    bool is_space_possible = false;
+    while (!is_space_possible) {
+      is_space_possible = true;
+
+      size_t x_pos = rand() % kBoardDimension_;
+      size_t y_pos = rand() % kBoardDimension_;
+
+      if (game_map_[x_pos][y_pos] != TileType::Dirt) {
+        is_space_possible = false;
+        continue;
+      }
+
+      game_map_[x_pos][y_pos] = TileType::Rock;
     }
   }
 }
