@@ -50,10 +50,14 @@ get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
 list(APPEND CORE_SOURCE_FILES src/core/game_state_generator.cpp)
+list(APPEND CORE_SOURCE_FILES src/core/player.cpp)
+list(APPEND CORE_SOURCE_FILES src/core/enemy.cpp)
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES})
 
 list(APPEND TEST_FILES tests/game_state_generator_tests.cpp)
+list(APPEND TEST_FILES tests/player_tests.cpp)
+list(APPEND TEST_FILES tests/enemy_tests.cpp)
 
 ci_make_app(
         APP_NAME    dig-dug-test

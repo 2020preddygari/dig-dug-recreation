@@ -167,4 +167,4 @@ bool GameStateGenerator::IsEnemyOrTunnel(size_t x_pos, size_t y_pos) {
   return false;
 }
 
-}
+} // namespace dig_dug

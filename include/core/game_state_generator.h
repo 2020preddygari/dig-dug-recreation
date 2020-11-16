@@ -78,4 +78,5 @@ class GameStateGenerator {
    */
   bool IsEnemyOrTunnel(size_t x_pos, size_t y_pos);
 };
-}
+
+} // namespace dig_dug
