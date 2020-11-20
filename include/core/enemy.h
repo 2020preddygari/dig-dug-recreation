@@ -12,16 +12,19 @@ class Enemy {
   /**
    * Initializes an enemy at the specified coordinate
    */
-  Enemy(const vec2& position);
+  Enemy(const vec2& position, const vec2& velocity);
 
   /**
    * Moves the enemy using the specified velocity
    */
-  void Move(const vec2& velocity);
+  void Move();
 
   vec2 GetPosition();
 
+  void SetVelocity(const vec2& velocity);
+
  private:
   vec2 position_;
+  vec2 velocity_;
 };
 }
