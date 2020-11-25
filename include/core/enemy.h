@@ -21,10 +21,15 @@ class Enemy {
 
   vec2 GetPosition();
 
+  bool GetIsGhost();
+
   void SetVelocity(const vec2& velocity);
+
+  void SetIsGhost();
 
  private:
   vec2 position_;
   vec2 velocity_;
+  bool is_ghost_;
 };
 }
