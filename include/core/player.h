@@ -8,6 +8,10 @@ using glm::vec2;
 
 class Player {
  public:
+  /**
+   * Initializes empty player
+   */
+  Player() = default;
 
   /**
    * Initializes a player at the specified coordinate

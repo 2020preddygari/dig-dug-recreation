@@ -132,7 +132,7 @@ TEST_CASE("Gameboard Creation") {
   }
 }
 
-TEST_CASE("GameStateGenerator Intialization and testing advancing levels") {
+TEST_CASE("GameStateGenerator Initialization and testing advancing levels") {
   GameStateGenerator generator;
 
   SECTION("Starting level of game") {

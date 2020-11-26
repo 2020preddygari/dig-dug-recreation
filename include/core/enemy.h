@@ -21,6 +21,8 @@ class Enemy {
 
   vec2 GetPosition();
 
+  vec2 GetVelocity();
+
   bool GetIsGhost();
 
   void SetVelocity(const vec2& velocity);
