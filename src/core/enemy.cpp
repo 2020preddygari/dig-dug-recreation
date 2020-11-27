@@ -16,6 +16,10 @@ vec2 Enemy::GetPosition() {
   return position_;
 }
 
+void Enemy::SetPosition(const vec2& position) {
+  position_ = position;
+}
+
 vec2 Enemy::GetVelocity() {
   return velocity_;
 }

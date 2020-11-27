@@ -11,6 +11,12 @@ namespace dig_dug {
 using glm::vec2;
 using dig_dug::TileType;
 
+enum class PossibleMove {
+  Forward,
+  Right,
+  Left
+};
+
 class GameEngine {
  public:
   /**
@@ -42,6 +48,33 @@ class GameEngine {
   vector<vector<TileType>> game_map_;
   Player player_;
   vector<Enemy> enemies_;
-  const double kSpeed = 1.0;
+  size_t enemy_ghost_percentage_;
+  size_t tile_size_;
+  const double kSpeed = 1;
+  const size_t kEnemyDifficulty = 2;
+  const double kGhostDistanceBuffer = 500;
+
+  /**
+   * Moves a normal, walking enemy
+   *
+   * @param enemy
+   */
+  void MoveWalkingEnemy(Enemy& enemy);
+
+  /**
+   * Checks whether the next tile along the object's path is open
+   *
+   * @param velocity velocity of object
+   * @param position position ofo object
+   * @return true if next tile open, false otherwise
+   */
+  bool IsNextTileOpen(const vec2& velocity, const vec2& position);
+
+  /**
+   * Moves a ghosted enemy that can go through dirt
+   *
+   * @param enemy
+   */
+  void MoveGhostedEnemy(Enemy& enemy);
 };
 } // namespace dig_dug
