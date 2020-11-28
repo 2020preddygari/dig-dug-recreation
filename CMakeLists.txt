@@ -53,6 +53,7 @@ list(APPEND CORE_SOURCE_FILES src/core/game_state_generator.cpp)
 list(APPEND CORE_SOURCE_FILES src/core/player.cpp)
 list(APPEND CORE_SOURCE_FILES src/core/enemy.cpp)
 list(APPEND CORE_SOURCE_FILES src/core/game_engine.cpp)
+list(APPEND CORE_SOURCE_FILES src/core/harpoon.cpp)
 
 list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES})
 
@@ -60,6 +61,7 @@ list(APPEND TEST_FILES tests/game_state_generator_tests.cpp)
 list(APPEND TEST_FILES tests/player_tests.cpp)
 list(APPEND TEST_FILES tests/enemy_tests.cpp)
 list(APPEND TEST_FILES tests/game_engine_tests.cpp)
+list(APPEND TEST_FILES tests/harpoon_tests.cpp)
 
 ci_make_app(
         APP_NAME    dig-dug-test

@@ -55,6 +55,7 @@ void GameEngine::MoveEnemies() {
 }
 
 void GameEngine::MovePlayer(const vec2& velocity) {
+  cur_attack_frames_ = 0;
   vec2 velocity_with_speed {velocity.x * kSpeed, velocity.y * kSpeed};
   player_.Move(velocity_with_speed);
   vec2 position = player_.GetPosition();
@@ -74,6 +75,10 @@ bool GameEngine::CheckPlayerDeath() {
   }
 
   return false;
+}
+
+void GameEngine::AttackEnemy() {
+
 }
 
 vector<vector<TileType>> GameEngine::GetGameMap() {

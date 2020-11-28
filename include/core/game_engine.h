@@ -45,6 +45,11 @@ class GameEngine {
    */
   bool CheckPlayerDeath();
 
+  /*
+   * Player shoots the harpoon
+   */
+  void AttackEnemy();
+
   vector<vector<TileType>> GetGameMap();
 
   Player GetPlayer();
@@ -60,9 +65,11 @@ class GameEngine {
   size_t enemy_ghost_percentage_;
   size_t tile_size_;
   size_t lives_ = 3;
+  size_t cur_attack_frames_ = 0;
   const double kSpeed = 1;
   const size_t kEnemyDifficulty = 2;
   const double kGhostDistanceBuffer = 500;
+  const size_t kMaxAttackFrames = 3;
 
   /**
    * Moves a normal, walking enemy
