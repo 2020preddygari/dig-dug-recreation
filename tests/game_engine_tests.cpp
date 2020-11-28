@@ -124,3 +124,65 @@ TEST_CASE("Moving Enemies") {
     }
   }
 }
+
+TEST_CASE("Moving the player") {
+  GameStateGenerator generator;
+  generator.Generate();
+  GameEngine engine (generator.GetGameMap(), 100);
+
+  SECTION("Test player position") {
+    SECTION("Move right") {
+      vec2 new_position {701, 700};
+      engine.MovePlayer({1, 0});
+      Player player = engine.GetPlayer();
+      REQUIRE(player.GetPosition() == new_position);
+    }
+
+    SECTION("Move down") {
+      vec2 new_position {700, 701};
+      engine.MovePlayer({0, 1});
+      Player player = engine.GetPlayer();
+      REQUIRE(player.GetPosition() == new_position);
+    }
+
+    SECTION("Move left") {
+      vec2 new_position {699, 700};
+      engine.MovePlayer({-1, 0});
+      Player player = engine.GetPlayer();
+      REQUIRE(player.GetPosition() == new_position);
+    }
+
+    SECTION("Move up") {
+      vec2 new_position {700, 699};
+      engine.MovePlayer({0, -1});
+      Player player = engine.GetPlayer();
+      REQUIRE(player.GetPosition() == new_position);
+    }
+  }
+
+  SECTION("Test if player digs through dirt") {
+    SECTION("Player digs right") {
+      engine.MovePlayer({1, 0});
+      vector<vector<TileType>> game_map = engine.GetGameMap();
+      REQUIRE(game_map[8][7] == TileType::Tunnel);
+    }
+
+    SECTION("Player digs down") {
+      engine.MovePlayer({0, 1});
+      vector<vector<TileType>> game_map = engine.GetGameMap();
+      REQUIRE(game_map[7][8] == TileType::Tunnel);
+    }
+
+    SECTION("Player digs left") {
+      engine.MovePlayer({-1, 0});
+      vector<vector<TileType>> game_map = engine.GetGameMap();
+      REQUIRE(game_map[6][7] == TileType::Tunnel);
+    }
+
+    SECTION("Player digs up") {
+      engine.MovePlayer({0, -1});
+      vector<vector<TileType>> game_map = engine.GetGameMap();
+      REQUIRE(game_map[7][6] == TileType::Tunnel);
+    }
+  }
+}

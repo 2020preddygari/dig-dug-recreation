@@ -76,5 +76,13 @@ class GameEngine {
    * @param enemy
    */
   void MoveGhostedEnemy(Enemy& enemy);
+
+  /**
+   * Turns the dirt tiles that the player enters into tunnels
+   *
+   * @param player_pos player position
+   * @param velocity player velocity
+   */
+  void DigUpTiles(const vec2& player_pos, const vec2& velocity);
 };
 } // namespace dig_dug

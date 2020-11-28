@@ -53,8 +53,11 @@ void GameEngine::MoveEnemies() {
   }
 }
 
-void GameEngine::MovePlayer(const vec2 &velocity) {
-
+void GameEngine::MovePlayer(const vec2& velocity) {
+  vec2 velocity_with_speed {velocity.x * kSpeed, velocity.y * kSpeed};
+  player_.Move(velocity_with_speed);
+  vec2 position = player_.GetPosition();
+  DigUpTiles(position, velocity);
 }
 
 vector<vector<TileType>> GameEngine::GetGameMap() {
@@ -159,4 +162,17 @@ void GameEngine::MoveGhostedEnemy(Enemy& enemy) {
     enemy.SetVelocity(new_velocity);
   }
 }
+
+void GameEngine::DigUpTiles(const vec2& player_pos, const vec2& velocity) {
+  if (velocity.x > 0 && velocity.y == 0) {
+    game_map_[((size_t) (player_pos.x) + tile_size_) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
+  } else if (velocity.x < 0 && velocity.y == 0) {
+    game_map_[(size_t) (player_pos.x) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
+  } else if (velocity.y > 0 && velocity.x == 0) {
+    game_map_[(size_t) (player_pos.x) / tile_size_][((size_t) (player_pos.y + tile_size_)) / tile_size_] = TileType::Tunnel;
+  } else if (velocity.y < 0 && velocity.x == 0) {
+    game_map_[(size_t) (player_pos.x) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
+  }
+}
+
 } // namespace dig_dug
