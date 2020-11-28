@@ -198,7 +198,6 @@ TEST_CASE("Testing player death") {
 
   SECTION("Testing player death") {
     Enemy enemy = engine.GetEnemies()[0];
-    Player player = engine.GetPlayer();
     vec2 enemy_position = enemy.GetPosition();
 
     for (size_t move = 0; move < 700; move++) {
@@ -219,5 +218,78 @@ TEST_CASE("Testing player death") {
     SECTION("Checking if lives were decremented") {
       REQUIRE(engine.GetLives() == 2);
     }
+  }
+}
+
+TEST_CASE("Testing player attacking") {
+  GameStateGenerator generator;
+  generator.Generate();
+  GameEngine engine (generator.GetGameMap(), 100);
+
+  SECTION("Harpoon extends until length limit") {
+    engine.AttackEnemy();
+
+    SECTION("Check that harpoon has launched") {
+      REQUIRE(engine.GetIsAttacking());
+    }
+
+    engine.AttackEnemy();
+    engine.AttackEnemy();
+    engine.AttackEnemy();
+
+    SECTION("Check that harpoon has went away") {
+      REQUIRE_FALSE(engine.GetIsAttacking());
+    }
+  }
+
+  SECTION("Harpoon hurts enemy") {
+    Enemy enemy = engine.GetEnemies()[0];
+    vec2 enemy_position = enemy.GetPosition();
+
+    for (size_t move = 0; move < 700; move++) {
+      engine.MovePlayer({-1, 0});
+      engine.MovePlayer({0, -1});
+    }
+
+    for (size_t player_x = 0; player_x < enemy_position.x; player_x++) {
+      engine.MovePlayer({1, 0});
+    }
+
+    for (size_t player_y = 0; player_y < enemy_position.y - 200; player_y++) {
+      engine.MovePlayer({0, 1});
+    }
+
+    engine.AttackEnemy();
+    engine.AttackEnemy();
+    engine.AttackEnemy();
+
+    enemy = engine.GetEnemies()[0];
+    REQUIRE(enemy.GetIsHurt());
+  }
+
+  SECTION("Harpoon kills enemy") {
+    Enemy enemy = engine.GetEnemies()[0];
+    vec2 enemy_position = enemy.GetPosition();
+
+    for (size_t move = 0; move < 700; move++) {
+      engine.MovePlayer({-1, 0});
+      engine.MovePlayer({0, -1});
+    }
+
+    for (size_t player_x = 0; player_x < enemy_position.x; player_x++) {
+      engine.MovePlayer({1, 0});
+    }
+
+    for (size_t player_y = 0; player_y < enemy_position.y - 200; player_y++) {
+      engine.MovePlayer({0, 1});
+    }
+
+    for (size_t attack = 0; attack < 5; attack++) {
+      engine.AttackEnemy();
+    }
+
+    vector<Enemy> enemies = engine.GetEnemies();
+    REQUIRE(enemies.size() == 3);
+    REQUIRE(engine.GetIsAttacking() == false);
   }
 }

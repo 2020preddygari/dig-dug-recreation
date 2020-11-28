@@ -18,8 +18,8 @@ TEST_CASE("Harpoon Tests") {
     harpoon.Move();
     REQUIRE(harpoon.GetArrowPosition() == new_position);
 
-    SECTION("Check if number of frames shot is incremented") {
-      REQUIRE(harpoon.GetNumFramesShot() == 1);
+    SECTION("Check distance traveled") {
+      REQUIRE(harpoon.GetDistanceTraveled() == 100);
     }
   }
 }

@@ -5,6 +5,7 @@
 #include "core/game_state_generator.h"
 #include "core/player.h"
 #include "core/enemy.h"
+#include "core/harpoon.h"
 
 namespace dig_dug {
 
@@ -58,18 +59,25 @@ class GameEngine {
 
   size_t GetLives();
 
+  bool GetIsAttacking();
+
  private:
   vector<vector<TileType>> game_map_;
   Player player_;
   vector<Enemy> enemies_;
+  Harpoon harpoon_;
+  bool is_attacking_ = false;
   size_t enemy_ghost_percentage_;
   size_t tile_size_;
   size_t lives_ = 3;
   size_t cur_attack_frames_ = 0;
+  size_t max_harpoon_traveling_frames_;
   const double kSpeed = 1;
   const size_t kEnemyDifficulty = 2;
   const double kGhostDistanceBuffer = 500;
-  const size_t kMaxAttackFrames = 3;
+  const size_t kAttackFrames = 3;
+  const size_t kHarpoonLength = 3;
+  const size_t kHarpoonSpeed = 100;
 
   /**
    * Moves a normal, walking enemy
@@ -79,11 +87,20 @@ class GameEngine {
   void MoveWalkingEnemy(Enemy& enemy);
 
   /**
-   * Checks whether the next tile along the object's path is open
+   * Checks whether the next tile along the object's path is dirt
    *
    * @param velocity velocity of object
-   * @param position position ofo object
-   * @return true if next tile open, false otherwise
+   * @param position position of object
+   * @return true if next tile is dirt, false otherwise
+   */
+  bool IsNextTileDirt(const vec2& velocity, const vec2& position);
+
+  /**
+   * Checks whether the next tile along the object's path is within the bounds of the board
+   *
+   * @param velocity velocity of object
+   * @param position position of object
+   * @return true if next tile is allowed, false otherwise
    */
   bool IsNextTileOpen(const vec2& velocity, const vec2& position);
 
@@ -101,5 +118,17 @@ class GameEngine {
    * @param velocity player velocity
    */
   void DigUpTiles(const vec2& player_pos, const vec2& velocity);
+
+  /**
+   * Creates a harpoon
+   */
+  void CreateHarpoon();
+
+  /**
+   * Gets the index of the enemy which the harpoon is hurting
+   *
+   * @return index of enemy, or -1 if harpoon not hurting anything
+   */
+  int GetHurtEnemy();
 };
 } // namespace dig_dug

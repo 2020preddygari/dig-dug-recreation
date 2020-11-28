@@ -25,7 +25,10 @@ class Player {
 
   vec2 GetPosition();
 
+  vec2 GetPrevVelocity();
+
  private:
   vec2 position_;
+  vec2 prev_velocity_ {1, 0};
 };
 }

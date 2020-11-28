@@ -12,6 +12,11 @@ class Harpoon {
  public:
 
   /**
+   * Initializes empty harpoon
+   */
+  Harpoon() = default;
+
+  /**
    * Initializes the harpoon
    *
    * @param start_pos position of player
@@ -26,13 +31,13 @@ class Harpoon {
 
   vec2 GetArrowPosition();
 
-  size_t GetNumFramesShot();
+  double GetDistanceTraveled();
 
  private:
   vec2 arrow_;
   vec2 start_position_;
   vec2 velocity_;
-  size_t num_frames_shot = 0;
+  double distance_traveled_ = 0;
 };
 
 } //namespace dig_dug

@@ -34,10 +34,15 @@ class Enemy {
 
   TileType GetType();
 
+  bool GetIsHurt();
+
+  void SetIsHurt(bool val);
+
  private:
   vec2 position_;
   vec2 velocity_;
   bool is_ghost_;
+  bool is_hurt_;
   TileType type_;
 };
 }

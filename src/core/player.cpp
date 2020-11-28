@@ -8,10 +8,15 @@ Player::Player(const vec2 &position) {
 
 void Player::Move(const vec2 &velocity) {
   position_ += velocity;
+  prev_velocity_ = velocity;
 }
 
 vec2 Player::GetPosition() {
   return position_;
+}
+
+vec2 Player::GetPrevVelocity() {
+  return prev_velocity_;
 }
 
 

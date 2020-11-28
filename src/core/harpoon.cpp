@@ -11,15 +11,15 @@ Harpoon::Harpoon(const vec2& start_pos, const vec2& velocity) {
 
 void Harpoon::Move() {
   arrow_ += velocity_;
-  num_frames_shot++;
+  distance_traveled_ += glm::length(velocity_);
 }
 
 vec2 Harpoon::GetArrowPosition() {
   return arrow_;
 }
 
-size_t Harpoon::GetNumFramesShot() {
-  return num_frames_shot;
+double Harpoon::GetDistanceTraveled() {
+  return distance_traveled_;
 }
 
 } //namespace dig_dug

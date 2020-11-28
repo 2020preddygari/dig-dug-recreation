@@ -6,6 +6,7 @@ Enemy::Enemy(const vec2& position, const vec2& velocity, TileType enemy_type) {
   position_ = position;
   velocity_ = velocity;
   is_ghost_ = false;
+  is_hurt_ = false;
   type_ = enemy_type;
 }
 
@@ -39,6 +40,14 @@ void Enemy::SetIsGhost() {
 
 TileType Enemy::GetType() {
   return type_;
+}
+
+bool Enemy::GetIsHurt() {
+  return is_hurt_;
+}
+
+void Enemy::SetIsHurt(bool val) {
+  is_hurt_ = val;
 }
 
 } // namespace dig_dug

@@ -33,6 +33,7 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
 
   enemy_ghost_percentage_ = enemies_.size() * kEnemyDifficulty;
   tile_size_ = tile_size;
+  max_harpoon_traveling_frames_ = tile_size * kHarpoonLength / (size_t) (kSpeed);
 }
 
 void GameEngine::MoveEnemies() {
@@ -44,22 +45,35 @@ void GameEngine::MoveEnemies() {
   for (size_t index = 0; index < enemies_.size(); index++) {
     Enemy& cur_enemy = enemies_[index];
 
-    if (cur_enemy.GetIsGhost()) {
-      MoveGhostedEnemy(cur_enemy);
-    } else {
-      MoveWalkingEnemy(cur_enemy);
-    }
+    if (!cur_enemy.GetIsHurt()) {
+      if (cur_enemy.GetIsGhost()) {
+        MoveGhostedEnemy(cur_enemy);
+      
+      } else {
+        MoveWalkingEnemy(cur_enemy);
+      }
 
-    cur_enemy.Move();
+      cur_enemy.Move();
+    }
   }
 }
 
 void GameEngine::MovePlayer(const vec2& velocity) {
+  // Resets all attack fields because no enemy is being attacked if the player is moving
   cur_attack_frames_ = 0;
+  is_attacking_ = false;
+  
+  for (size_t index = 0; index < enemies_.size(); index++) {
+    Enemy& enemy = enemies_[index];
+    enemy.SetIsHurt(false);
+  }
+  
   vec2 velocity_with_speed {velocity.x * kSpeed, velocity.y * kSpeed};
-  player_.Move(velocity_with_speed);
-  vec2 position = player_.GetPosition();
-  DigUpTiles(position, velocity);
+  if (IsNextTileOpen(velocity_with_speed, player_.GetPosition())) {
+    player_.Move(velocity_with_speed);
+    vec2 position = player_.GetPosition();
+    DigUpTiles(position, velocity);
+  }
 }
 
 bool GameEngine::CheckPlayerDeath() {
@@ -78,7 +92,30 @@ bool GameEngine::CheckPlayerDeath() {
 }
 
 void GameEngine::AttackEnemy() {
+  if (!is_attacking_) {
+    CreateHarpoon();
+    is_attacking_ = true;
 
+  }
+
+  int hurt_enemy_index = GetHurtEnemy();
+
+  if (hurt_enemy_index > -1) {
+    cur_attack_frames_++;
+    enemies_[hurt_enemy_index].SetIsHurt(true);
+
+    if (cur_attack_frames_ >= kAttackFrames) {
+      enemies_.erase(enemies_.begin() + hurt_enemy_index);
+      cur_attack_frames_ = 0;
+      is_attacking_ = false;
+    }
+
+  } else if (harpoon_.GetDistanceTraveled() >= max_harpoon_traveling_frames_) {
+    is_attacking_ = false;
+
+  } else {
+    harpoon_.Move();
+  }
 }
 
 vector<vector<TileType>> GameEngine::GetGameMap() {
@@ -97,6 +134,10 @@ size_t GameEngine::GetLives() {
   return lives_;
 }
 
+bool GameEngine::GetIsAttacking() {
+  return is_attacking_;
+}
+
 void GameEngine::MoveWalkingEnemy(Enemy& enemy) {
   vec2 cur_position = enemy.GetPosition();
   vec2 cur_velocity = enemy.GetVelocity();
@@ -105,20 +146,20 @@ void GameEngine::MoveWalkingEnemy(Enemy& enemy) {
   if ((size_t) (cur_position.x) % tile_size_ == 0 && (size_t) (cur_position.y) % tile_size_ == 0) {
     vector<PossibleMove> possible_moves;
 
-    // check forward tile open
-    if (IsNextTileOpen(cur_velocity, cur_position)) {
+    // check forward tile dirt
+    if (IsNextTileDirt(cur_velocity, cur_position)) {
       possible_moves.push_back(PossibleMove::Forward);
     }
 
-    // check left tile open
+    // check left tile dirt
     vec2 turn_left_velocity {cur_velocity.y, cur_velocity.x * -1};
-    if (IsNextTileOpen(turn_left_velocity, cur_position)) {
+    if (IsNextTileDirt(turn_left_velocity, cur_position)) {
       possible_moves.push_back(PossibleMove::Left);
     }
 
-    // check right tile open
+    // check right tile dirt
     vec2 turn_right_velocity {cur_velocity.y * -1, cur_velocity.x};
-    if (IsNextTileOpen(turn_right_velocity, cur_position)) {
+    if (IsNextTileDirt(turn_right_velocity, cur_position)) {
       possible_moves.push_back(PossibleMove::Right);
     }
 
@@ -138,28 +179,61 @@ void GameEngine::MoveWalkingEnemy(Enemy& enemy) {
   }
 }
 
-bool GameEngine::IsNextTileOpen(const vec2& velocity, const vec2& position) {
+bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) {
+  if (!IsNextTileOpen(velocity, position)) {
+    return false;
+  }
+
   if (velocity.x > 0 && velocity.y == 0) {
     size_t next_x = ((size_t) (position.x) + (size_t) (velocity.x)) / tile_size_ + 1;
-    if (next_x < game_map_.size() && game_map_[next_x][(size_t) (position.y) / tile_size_] == TileType::Tunnel) {
+    if (game_map_[next_x][(size_t) (position.y) / tile_size_] == TileType::Tunnel) {
       return true;
     }
 
   } else if (velocity.x == 0 && velocity.y > 0) {
     size_t next_y = ((size_t) (position.y) + (size_t) (velocity.y)) / tile_size_ + 1;
-    if (next_y < game_map_.size() && game_map_[(size_t) (position.x) / tile_size_][next_y] == TileType::Tunnel) {
+    if (game_map_[(size_t) (position.x) / tile_size_][next_y] == TileType::Tunnel) {
       return true;
     }
 
   } else if (velocity.x < 0 && velocity.y == 0) {
     size_t next_x = ((size_t) (position.x) + (size_t) (velocity.x)) / tile_size_;
-    if (next_x >= 0 && game_map_[next_x][(size_t) (position.y) / tile_size_] == TileType::Tunnel) {
+    if (game_map_[next_x][(size_t) (position.y) / tile_size_] == TileType::Tunnel) {
       return true;
     }
 
   } else {
     size_t next_y = ((size_t) (position.y) + (size_t) (velocity.y)) / tile_size_;
-    if (next_y >= 0 && game_map_[(size_t) (position.x) / tile_size_][next_y] == TileType::Tunnel) {
+    if (game_map_[(size_t) (position.x) / tile_size_][next_y] == TileType::Tunnel) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+bool GameEngine::IsNextTileOpen(const vec2 &velocity, const vec2 &position) {
+  if (velocity.x > 0 && velocity.y == 0) {
+    size_t next_x = ((size_t) (position.x) + (size_t) (velocity.x)) / tile_size_ + 1;
+    if (next_x < game_map_.size()) {
+      return true;
+    }
+
+  } else if (velocity.x == 0 && velocity.y > 0) {
+    size_t next_y = ((size_t) (position.y) + (size_t) (velocity.y)) / tile_size_ + 1;
+    if (next_y < game_map_.size()) {
+      return true;
+    }
+
+  } else if (velocity.x < 0 && velocity.y == 0) {
+    size_t next_x = ((size_t) (position.x) + (size_t) (velocity.x)) / tile_size_;
+    if (next_x >= 0) {
+      return true;
+    }
+
+  } else {
+    size_t next_y = ((size_t) (position.y) + (size_t) (velocity.y)) / tile_size_;
+    if (next_y >= 0) {
       return true;
     }
   }
@@ -191,13 +265,40 @@ void GameEngine::MoveGhostedEnemy(Enemy& enemy) {
 void GameEngine::DigUpTiles(const vec2& player_pos, const vec2& velocity) {
   if (velocity.x > 0 && velocity.y == 0) {
     game_map_[((size_t) (player_pos.x) + tile_size_) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
+
   } else if (velocity.x < 0 && velocity.y == 0) {
     game_map_[(size_t) (player_pos.x) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
+
   } else if (velocity.y > 0 && velocity.x == 0) {
     game_map_[(size_t) (player_pos.x) / tile_size_][((size_t) (player_pos.y + tile_size_)) / tile_size_] = TileType::Tunnel;
+
   } else if (velocity.y < 0 && velocity.x == 0) {
     game_map_[(size_t) (player_pos.x) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
   }
+}
+
+void GameEngine::CreateHarpoon() {
+  vec2 player_position = player_.GetPosition();
+  vec2 player_prev_velocity = player_.GetPrevVelocity();
+  vec2 harpoon_velocity_unit_vector = player_prev_velocity / glm::length(player_prev_velocity);
+  vec2 harpoon_velocity = {harpoon_velocity_unit_vector.x * kHarpoonSpeed, harpoon_velocity_unit_vector.y * kHarpoonSpeed};
+
+  harpoon_ = Harpoon(player_position, harpoon_velocity);
+}
+
+int GameEngine::GetHurtEnemy() {
+  for (size_t index = 0; index < enemies_.size(); index++) {
+    Enemy& enemy = enemies_[index];
+    vec2 enemy_pos = enemy.GetPosition();
+    vec2 harpoon_pos = harpoon_.GetArrowPosition();
+    double distance = glm::length(enemy_pos - harpoon_pos);
+
+    if (!enemy.GetIsGhost() && distance < tile_size_) {
+      return index;
+    }
+  }
+
+  return -1;
 }
 
 } // namespace dig_dug
