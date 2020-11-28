@@ -20,7 +20,8 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
           velocity = {0, kSpeed};
         }
 
-        enemies_.emplace_back(position, velocity);
+        Enemy enemy (position, velocity, game_map_[x][y]);
+        enemies_.push_back(enemy);
         game_map_[x][y] = TileType::Tunnel;
       }
 

@@ -2,10 +2,11 @@
 
 namespace dig_dug {
 
-Enemy::Enemy(const vec2& position, const vec2& velocity) {
+Enemy::Enemy(const vec2& position, const vec2& velocity, TileType enemy_type) {
   position_ = position;
   velocity_ = velocity;
   is_ghost_ = false;
+  type_ = enemy_type;
 }
 
 void Enemy::Move() {
@@ -34,6 +35,10 @@ bool Enemy::GetIsGhost() {
 
 void Enemy::SetIsGhost() {
   is_ghost_ = !is_ghost_;
+}
+
+TileType Enemy::GetType() {
+  return type_;
 }
 
 } // namespace dig_dug
