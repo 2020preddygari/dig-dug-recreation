@@ -60,6 +60,21 @@ void GameEngine::MovePlayer(const vec2& velocity) {
   DigUpTiles(position, velocity);
 }
 
+bool GameEngine::CheckPlayerDeath() {
+  for (Enemy enemy : enemies_) {
+    vec2 enemy_pos = enemy.GetPosition();
+    vec2 player_pos = player_.GetPosition();
+    double distance = glm::length(enemy_pos - player_pos);
+
+    if (!enemy.GetIsGhost() && distance < tile_size_) {
+      lives_--;
+      return true;
+    }
+  }
+
+  return false;
+}
+
 vector<vector<TileType>> GameEngine::GetGameMap() {
   return game_map_;
 }
@@ -70,6 +85,10 @@ Player GameEngine::GetPlayer() {
 
 vector<Enemy> GameEngine::GetEnemies() {
   return enemies_;
+}
+
+size_t GameEngine::GetLives() {
+  return lives_;
 }
 
 void GameEngine::MoveWalkingEnemy(Enemy& enemy) {

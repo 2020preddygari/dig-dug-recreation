@@ -38,11 +38,20 @@ class GameEngine {
    */
   void MovePlayer(const vec2& velocity);
 
+  /**
+   * Checks whether an enemy killed the player
+   *
+   * @return true if player dies, false if not
+   */
+  bool CheckPlayerDeath();
+
   vector<vector<TileType>> GetGameMap();
 
   Player GetPlayer();
 
   vector<Enemy> GetEnemies();
+
+  size_t GetLives();
 
  private:
   vector<vector<TileType>> game_map_;
@@ -50,6 +59,7 @@ class GameEngine {
   vector<Enemy> enemies_;
   size_t enemy_ghost_percentage_;
   size_t tile_size_;
+  size_t lives_ = 3;
   const double kSpeed = 1;
   const size_t kEnemyDifficulty = 2;
   const double kGhostDistanceBuffer = 500;

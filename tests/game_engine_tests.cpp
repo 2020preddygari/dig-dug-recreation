@@ -186,3 +186,38 @@ TEST_CASE("Moving the player") {
     }
   }
 }
+
+TEST_CASE("Testing player death") {
+  GameStateGenerator generator;
+  generator.Generate();
+  GameEngine engine (generator.GetGameMap(), 100);
+
+  SECTION("Testing when player is still alive") {
+    REQUIRE_FALSE(engine.CheckPlayerDeath());
+  }
+
+  SECTION("Testing player death") {
+    Enemy enemy = engine.GetEnemies()[0];
+    Player player = engine.GetPlayer();
+    vec2 enemy_position = enemy.GetPosition();
+
+    for (size_t move = 0; move < 700; move++) {
+      engine.MovePlayer({-1, 0});
+      engine.MovePlayer({0, -1});
+    }
+
+    for (size_t player_x = 0; player_x < enemy_position.x - 50; player_x++) {
+      engine.MovePlayer({1, 0});
+    }
+
+    for (size_t player_y = 0; player_y <= enemy_position.y; player_y++) {
+      engine.MovePlayer({0, 1});
+    }
+
+    REQUIRE(engine.CheckPlayerDeath());
+
+    SECTION("Checking if lives were decremented") {
+      REQUIRE(engine.GetLives() == 2);
+    }
+  }
+}
