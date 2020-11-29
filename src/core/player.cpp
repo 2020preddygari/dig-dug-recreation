@@ -2,13 +2,17 @@
 
 namespace dig_dug {
 
-Player::Player(const vec2 &position) {
+Player::Player(const vec2& position) {
   position_ = position;
 }
 
-void Player::Move(const vec2 &velocity) {
+void Player::Move(const vec2& velocity) {
+  vec2 kZeroVector = {0, 0};
   position_ += velocity;
-  prev_velocity_ = velocity;
+
+  if (velocity != kZeroVector) {
+    prev_velocity_ = velocity;
+  }
 }
 
 vec2 Player::GetPosition() {

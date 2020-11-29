@@ -27,4 +27,21 @@ TEST_CASE("Player Movement tests") {
     vec2 position = {6, 6};
     REQUIRE(player.GetPosition() == position);
   }
+
+  SECTION("Player previous velocity") {
+    Player player ({7, 7});
+
+    SECTION("Check that previous velocity is updated") {
+      vec2 prev_velocity {1, 0};
+      player.Move({1, 0});
+      REQUIRE(player.GetPrevVelocity() == prev_velocity);
+    }
+
+    SECTION("Check that previous velocity is not update when the current velocity is zero") {
+      vec2 prev_velocity {1, 0};
+      player.Move({1, 0});
+      player.Move({0, 0});
+      REQUIRE(player.GetPrevVelocity() == prev_velocity);
+    }
+  }
 }
