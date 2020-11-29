@@ -67,12 +67,38 @@ void GameEngine::MovePlayer(const vec2& velocity) {
     Enemy& enemy = enemies_[index];
     enemy.SetIsHurt(false);
   }
-  
+
+  const vec2 kZeroVelocity {0, 0};
+  vec2 position = player_.GetPosition();
   vec2 velocity_with_speed {velocity.x * kSpeed, velocity.y * kSpeed};
-  if (IsNextTileOpen(velocity_with_speed, player_.GetPosition())) {
-    player_.Move(velocity_with_speed);
-    vec2 position = player_.GetPosition();
-    DigUpTiles(position, velocity);
+  vec2 opposite_velocity {velocity_with_speed.x * -1, velocity_with_speed.y * -1};
+  vec2 player_prev_speed = player_.GetPrevVelocity();
+  bool is_next_tile_open = IsNextTileOpen(velocity_with_speed, player_.GetPosition());
+
+  // Moves according to the given velocity when it is in the same axis as the previous velocity
+  // OR the player is aligned with the tiles
+  if (is_next_tile_open) {
+    if ((size_t) (position.x) % 100 == 0 && (size_t) (position.y) % 100 == 0) {
+      if ((velocity_with_speed == player_prev_speed || velocity_with_speed == kZeroVelocity)
+          && delayed_turn_velocity_ != kZeroVelocity) {
+        player_.Move(delayed_turn_velocity_);
+        delayed_turn_velocity_ = {0, 0};
+        DigUpTiles(player_.GetPosition(), delayed_turn_velocity_);
+
+      } else {
+        player_.Move(velocity_with_speed);
+        DigUpTiles(player_.GetPosition(), velocity_with_speed);
+      }
+
+    } else if (velocity_with_speed == player_prev_speed || opposite_velocity == player_prev_speed) {
+      player_.Move(velocity_with_speed);
+      DigUpTiles(player_.GetPosition(), velocity_with_speed);
+
+    } else {
+      player_.Move(player_prev_speed);
+      DigUpTiles(player_.GetPosition(), velocity_with_speed);
+      delayed_turn_velocity_ = velocity_with_speed;
+    }
   }
 }
 
@@ -185,25 +211,41 @@ bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) {
   }
 
   if (velocity.x > 0 && velocity.y == 0) {
-    size_t next_x = ((size_t) (position.x) + (size_t) (velocity.x)) / tile_size_ + 1;
+    size_t next_pixel_val = (size_t) (position.x) + (size_t) (velocity.x) + tile_size_;
+    size_t next_x;
+    
+    if (next_pixel_val == game_map_.size() * tile_size_) {
+      next_x = game_map_.size() - 1;
+    } else {
+      next_x = next_pixel_val / tile_size_;
+    }
+
     if (game_map_[next_x][(size_t) (position.y) / tile_size_] == TileType::Tunnel) {
       return true;
     }
 
   } else if (velocity.x == 0 && velocity.y > 0) {
-    size_t next_y = ((size_t) (position.y) + (size_t) (velocity.y)) / tile_size_ + 1;
+    size_t next_pixel_val = (size_t) (position.y) + (size_t) (velocity.y) + tile_size_;
+    size_t next_y;
+    
+    if (next_pixel_val == game_map_.size() * tile_size_) {
+      next_y = game_map_.size() - 1;
+    } else {
+      next_y = next_pixel_val / tile_size_;
+    }
+
     if (game_map_[(size_t) (position.x) / tile_size_][next_y] == TileType::Tunnel) {
       return true;
     }
 
   } else if (velocity.x < 0 && velocity.y == 0) {
-    size_t next_x = ((size_t) (position.x) + (size_t) (velocity.x)) / tile_size_;
+    int next_x = ((int) (position.x) + (int) (velocity.x)) / (int) (tile_size_);
     if (game_map_[next_x][(size_t) (position.y) / tile_size_] == TileType::Tunnel) {
       return true;
     }
 
   } else {
-    size_t next_y = ((size_t) (position.y) + (size_t) (velocity.y)) / tile_size_;
+    int next_y = ((int) (position.y) + (int) (velocity.y)) / (int) (tile_size_);
     if (game_map_[(size_t) (position.x) / tile_size_][next_y] == TileType::Tunnel) {
       return true;
     }
@@ -214,25 +256,25 @@ bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) {
 
 bool GameEngine::IsNextTileOpen(const vec2 &velocity, const vec2 &position) {
   if (velocity.x > 0 && velocity.y == 0) {
-    size_t next_x = ((size_t) (position.x) + (size_t) (velocity.x)) / tile_size_ + 1;
-    if (next_x < game_map_.size()) {
+    size_t next_x = (size_t) (position.x) + (size_t) (velocity.x) + tile_size_;
+    if (next_x <= game_map_.size() * tile_size_) {
       return true;
     }
 
   } else if (velocity.x == 0 && velocity.y > 0) {
-    size_t next_y = ((size_t) (position.y) + (size_t) (velocity.y)) / tile_size_ + 1;
-    if (next_y < game_map_.size()) {
+    size_t next_y = (size_t) (position.y) + (size_t) (velocity.y) + tile_size_;
+    if (next_y <= game_map_.size() * tile_size_) {
       return true;
     }
 
   } else if (velocity.x < 0 && velocity.y == 0) {
-    size_t next_x = ((size_t) (position.x) + (size_t) (velocity.x)) / tile_size_;
+    int next_x = ((int) (position.x) + (int) (velocity.x));
     if (next_x >= 0) {
       return true;
     }
 
   } else {
-    size_t next_y = ((size_t) (position.y) + (size_t) (velocity.y)) / tile_size_;
+    int next_y = ((int) (position.y) + (int) (velocity.y));
     if (next_y >= 0) {
       return true;
     }
@@ -264,13 +306,33 @@ void GameEngine::MoveGhostedEnemy(Enemy& enemy) {
 
 void GameEngine::DigUpTiles(const vec2& player_pos, const vec2& velocity) {
   if (velocity.x > 0 && velocity.y == 0) {
-    game_map_[((size_t) (player_pos.x) + tile_size_) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
+    // Makes sure right boundary of gameboard is considered part of the game tile to the left of it
+    size_t new_pixel_position = (size_t) (player_pos.x) + tile_size_;
+    size_t new_index;
+
+    if (new_pixel_position == game_map_.size() * tile_size_) {
+      new_index = game_map_.size() - 1;
+    } else {
+      new_index = new_pixel_position / tile_size_;
+    }
+
+    game_map_[new_index][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
 
   } else if (velocity.x < 0 && velocity.y == 0) {
     game_map_[(size_t) (player_pos.x) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
 
   } else if (velocity.y > 0 && velocity.x == 0) {
-    game_map_[(size_t) (player_pos.x) / tile_size_][((size_t) (player_pos.y + tile_size_)) / tile_size_] = TileType::Tunnel;
+    // Makes sure bottom boundary of gameboard is considered part of the game tile above it
+    size_t new_pixel_position = (size_t) (player_pos.y) + tile_size_;
+    size_t new_index;
+
+    if (new_pixel_position == game_map_.size() * tile_size_) {
+      new_index = game_map_.size() - 1;
+    } else {
+      new_index = new_pixel_position / tile_size_;
+    }
+
+    game_map_[(size_t) (player_pos.x) / tile_size_][new_index] = TileType::Tunnel;
 
   } else if (velocity.y < 0 && velocity.x == 0) {
     game_map_[(size_t) (player_pos.x) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;

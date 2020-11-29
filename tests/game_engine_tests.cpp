@@ -136,6 +136,17 @@ TEST_CASE("Moving the player") {
       engine.MovePlayer({1, 0});
       Player player = engine.GetPlayer();
       REQUIRE(player.GetPosition() == new_position);
+
+      SECTION("Don't move right at boundary") {
+        for (size_t move = 0; move < 700; move++) {
+          engine.MovePlayer({1, 0});
+        }
+        engine.MovePlayer({1, 0});
+
+        player = engine.GetPlayer();
+        new_position = {1400, 700};
+        REQUIRE(player.GetPosition() == new_position);
+      }
     }
 
     SECTION("Move down") {
@@ -143,6 +154,17 @@ TEST_CASE("Moving the player") {
       engine.MovePlayer({0, 1});
       Player player = engine.GetPlayer();
       REQUIRE(player.GetPosition() == new_position);
+
+      SECTION("Don't move down at boundary") {
+        for (size_t move = 0; move < 700; move++) {
+          engine.MovePlayer({0, 1});
+        }
+        engine.MovePlayer({0, 1});
+
+        player = engine.GetPlayer();
+        new_position = {700, 1400};
+        REQUIRE(player.GetPosition() == new_position);
+      }
     }
 
     SECTION("Move left") {
@@ -150,11 +172,41 @@ TEST_CASE("Moving the player") {
       engine.MovePlayer({-1, 0});
       Player player = engine.GetPlayer();
       REQUIRE(player.GetPosition() == new_position);
+
+      SECTION("Don't move left at boundary") {
+        for (size_t move = 0; move < 700; move++) {
+          engine.MovePlayer({-1, 0});
+        }
+        engine.MovePlayer({-1, 0});
+
+        player = engine.GetPlayer();
+        new_position = {0, 700};
+        REQUIRE(player.GetPosition() == new_position);
+      }
     }
 
     SECTION("Move up") {
       vec2 new_position {700, 699};
       engine.MovePlayer({0, -1});
+      Player player = engine.GetPlayer();
+      REQUIRE(player.GetPosition() == new_position);
+
+      SECTION("Don't move up at boundary") {
+        for (size_t move = 0; move < 700; move++) {
+          engine.MovePlayer({0, -1});
+        }
+        engine.MovePlayer({0, -1});
+
+        player = engine.GetPlayer();
+        new_position = {700, 0};
+        REQUIRE(player.GetPosition() == new_position);
+      }
+    }
+
+    SECTION("Player tries to turn in the middle of tiles") {
+      vec2 new_position {702, 700};
+      engine.MovePlayer({1, 0});
+      engine.MovePlayer({0, 1});
       Player player = engine.GetPlayer();
       REQUIRE(player.GetPosition() == new_position);
     }

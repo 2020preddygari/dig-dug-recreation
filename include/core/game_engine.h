@@ -72,6 +72,7 @@ class GameEngine {
   size_t lives_ = 3;
   size_t cur_attack_frames_ = 0;
   size_t max_harpoon_traveling_frames_;
+  vec2 delayed_turn_velocity_ {0, 0};
   const double kSpeed = 1;
   const size_t kEnemyDifficulty = 2;
   const double kGhostDistanceBuffer = 500;
