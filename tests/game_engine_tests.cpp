@@ -210,6 +210,19 @@ TEST_CASE("Moving the player") {
       Player player = engine.GetPlayer();
       REQUIRE(player.GetPosition() == new_position);
     }
+
+    SECTION("Player tries to turn in middle of tiles, then turns when it reaches a tile boundary") {
+      vec2 new_position {800, 701};
+
+      engine.MovePlayer({1, 0});
+      engine.MovePlayer({0, 1});
+      for (size_t move = 0; move < 99; move++) {
+        engine.MovePlayer({0, 0});
+      }
+
+      Player player = engine.GetPlayer();
+      REQUIRE(player.GetPosition() == new_position);
+    }
   }
 
   SECTION("Test if player digs through dirt") {

@@ -96,8 +96,11 @@ void GameEngine::MovePlayer(const vec2& velocity) {
 
     } else {
       player_.Move(player_prev_speed);
-      DigUpTiles(player_.GetPosition(), velocity_with_speed);
-      delayed_turn_velocity_ = velocity_with_speed;
+      DigUpTiles(player_.GetPosition(), player_prev_speed);
+
+      if (velocity_with_speed != kZeroVelocity) {
+        delayed_turn_velocity_ = velocity_with_speed;
+      }
     }
   }
 }
