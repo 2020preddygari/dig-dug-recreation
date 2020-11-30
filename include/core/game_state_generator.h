@@ -40,10 +40,11 @@ class GameStateGenerator {
 
  private:
   size_t level_ = 1;
-  size_t kBoardDimension_ = 15;
-  size_t kTunnelSize_ = 3;
+  TileType cur_enemy = TileType::Pooka;
+  const size_t kBoardDimension_ = 15;
+  const size_t kTunnelSize_ = 3;
   // minimum distance between enemies
-  size_t kEnemyBuffer = 1;
+  const size_t kEnemyBuffer = 1;
   vector<vector<TileType>> game_map_;
 
   /**
@@ -77,6 +78,16 @@ class GameStateGenerator {
    * @return true if there is an enemy, false if not
    */
   bool IsEnemyOrTunnel(size_t x_pos, size_t y_pos);
+
+  /**
+   * Checks whether space is possible for an enemy and adds it if it is possible
+   *
+   * @param x_pos x position
+   * @param y_pos y position
+   * @param direction 0 for horizontal, 1 for vertical
+   * @return true if space possible, false if not
+   */
+  bool IsSpacePossible(size_t x_pos, size_t y_pos, size_t direction);
 };
 
 } // namespace dig_dug

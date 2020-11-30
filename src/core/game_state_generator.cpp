@@ -7,10 +7,12 @@ vector<vector<TileType>> GameStateGenerator::Generate() {
   const size_t kMaxEnemies = 8;
   const size_t kMaxLevelWithAdditionalEnemy = 10;
   const size_t kMinRocks = 3;
-  // Formula for calculating number of enemies using level
   size_t num_enemies;
   // 3 or 4 rocks
   size_t num_rocks = (rand() % 2) + kMinRocks;
+  // Number of enemies starts at 4 and increases by 1 every 2 levels
+  // Sets the maximum number of enemies if the current level plugged into the formula results in a number of enemies
+  // greater than the limit
   if (level_ <= kMaxLevelWithAdditionalEnemy) {
     num_enemies = static_cast<int>((level_ - 1) / 2) + 4;
   } else {
@@ -68,52 +70,7 @@ void GameStateGenerator::GenerateEnemies(size_t num_enemies) {
         continue;
       }
 
-
-      if (direction == 0) {
-        // Checks if every space in tunnel is not next to another enemy or tunnel
-        for (size_t tunnel_space = 0; tunnel_space < kTunnelSize_; tunnel_space++) {
-          if (!IsGoodSpot(x_pos + tunnel_space, y_pos)) {
-            is_space_possible = false;
-            break;
-          }
-        }
-
-        if (is_space_possible) {
-          game_map_[x_pos][y_pos] = cur_enemy;
-
-          if (cur_enemy == TileType::Pooka) {
-            cur_enemy = TileType::Fygar;
-          } else {
-            cur_enemy = TileType::Pooka;
-          }
-
-          for (size_t tunnel_space = 1; tunnel_space < kTunnelSize_; tunnel_space++) {
-            game_map_[x_pos + tunnel_space][y_pos] = TileType::Tunnel;
-          }
-        }
-
-      } else {
-        for (size_t tunnel_space = 0; tunnel_space < kTunnelSize_; tunnel_space++) {
-          if (!IsGoodSpot(x_pos, y_pos + tunnel_space)) {
-            is_space_possible = false;
-            break;
-          }
-        }
-
-        if (is_space_possible) {
-          game_map_[x_pos][y_pos] = cur_enemy;
-
-          if (cur_enemy == TileType::Pooka) {
-            cur_enemy = TileType::Fygar;
-          } else {
-            cur_enemy = TileType::Pooka;
-          }
-
-          for (size_t tunnel_space = 1; tunnel_space < kTunnelSize_; tunnel_space++) {
-            game_map_[x_pos][y_pos + tunnel_space] = TileType::Tunnel;
-          }
-        }
-      }
+      is_space_possible = IsSpacePossible(x_pos, y_pos, direction);
     }
   }
 }
@@ -165,6 +122,49 @@ bool GameStateGenerator::IsEnemyOrTunnel(size_t x_pos, size_t y_pos) {
   }
 
   return false;
+}
+
+bool GameStateGenerator::IsSpacePossible(size_t x_pos, size_t y_pos, size_t direction) {
+  size_t x_val;
+  size_t y_val;
+  // Checks if every space in tunnel is not next to another enemy or tunnel
+  for (size_t tunnel_space = 0; tunnel_space < kTunnelSize_; tunnel_space++) {
+    if (direction == 0) {
+      x_val = x_pos + tunnel_space;
+      y_val = y_pos;
+    } else {
+      x_val = x_pos;
+      y_val = y_pos + tunnel_space;
+    }
+
+    if (!IsGoodSpot(x_val, y_val)) {
+      return false;
+    }
+  }
+
+  game_map_[x_pos][y_pos] = cur_enemy;
+
+  // Makes sure different enemy is added next
+  if (cur_enemy == TileType::Pooka) {
+    cur_enemy = TileType::Fygar;
+  } else {
+    cur_enemy = TileType::Pooka;
+  }
+
+  // Creates tunnels on the enemy's path
+  for (size_t tunnel_space = 1; tunnel_space < kTunnelSize_; tunnel_space++) {
+    if (direction == 0) {
+      x_val = x_pos + tunnel_space;
+      y_val = y_pos;
+    } else {
+      x_val = x_pos;
+      y_val = y_pos + tunnel_space;
+    }
+
+    game_map_[x_val][y_val] = TileType::Tunnel;
+  }
+
+  return true;
 }
 
 } // namespace dig_dug
