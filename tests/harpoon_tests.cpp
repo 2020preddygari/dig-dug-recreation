@@ -19,7 +19,7 @@ TEST_CASE("Harpoon Tests") {
     REQUIRE(harpoon.GetArrowPosition() == new_position);
 
     SECTION("Check distance traveled") {
-      REQUIRE(harpoon.GetDistanceTraveled() == 100);
+      REQUIRE(harpoon.GetDistanceTraveled() == 1);
     }
   }
 }

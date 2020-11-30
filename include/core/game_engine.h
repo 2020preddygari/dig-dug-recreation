@@ -131,5 +131,13 @@ class GameEngine {
    * @return index of enemy, or -1 if harpoon not hurting anything
    */
   int GetHurtEnemy();
+
+  /**
+   * Gets the index on the game board of a player's position in pixels
+   *
+   * @param position player position
+   * @return index on gameboard
+   */
+  size_t GetIndexOfPlayer(size_t position);
 };
 } // namespace dig_dug

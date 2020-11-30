@@ -7,6 +7,7 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
   size_t center_coord = (initial_game_state.size() / 2) * tile_size;
   player_ = Player({center_coord, center_coord});
 
+  // Takes enemies out of board and stores them in enemies_
   game_map_ = initial_game_state;
   for (size_t x = 0; x < game_map_.size(); x++) {
     for (size_t y = 0; y < game_map_.size(); y++) {
@@ -37,7 +38,8 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
 }
 
 void GameEngine::MoveEnemies() {
-  if (rand() % tile_size_ < enemy_ghost_percentage_) {
+  // Turns an enemy into a ghost if random number below enemy_ghost_percentage_
+  if ((size_t) (rand() % 100) < enemy_ghost_percentage_) {
     size_t ghost_index = rand() % enemies_.size();
     enemies_[ghost_index].SetIsGhost();
   }
@@ -75,10 +77,10 @@ void GameEngine::MovePlayer(const vec2& velocity) {
   vec2 player_prev_speed = player_.GetPrevVelocity();
   bool is_next_tile_open = IsNextTileOpen(velocity_with_speed, player_.GetPosition());
 
-  // Moves according to the given velocity when it is in the same axis as the previous velocity
-  // OR the player is aligned with the tiles
   if (is_next_tile_open) {
+    // Checks if player is aligned with tile
     if ((size_t) (position.x) % 100 == 0 && (size_t) (position.y) % 100 == 0) {
+      // Check if player tried to turn in the middle of tiles, and performs that move if so
       if ((velocity_with_speed == player_prev_speed || velocity_with_speed == kZeroVelocity)
           && delayed_turn_velocity_ != kZeroVelocity) {
         player_.Move(delayed_turn_velocity_);
@@ -90,10 +92,12 @@ void GameEngine::MovePlayer(const vec2& velocity) {
         DigUpTiles(player_.GetPosition(), velocity_with_speed);
       }
 
+    // Moves if movement is in the same axis as the previous move
     } else if (velocity_with_speed == player_prev_speed || opposite_velocity == player_prev_speed) {
       player_.Move(velocity_with_speed);
       DigUpTiles(player_.GetPosition(), velocity_with_speed);
 
+    // Moves according to the previous velocity if trying to turn in the middle of tiles
     } else {
       player_.Move(player_prev_speed);
       DigUpTiles(player_.GetPosition(), player_prev_speed);
@@ -128,11 +132,11 @@ void GameEngine::AttackEnemy() {
   }
 
   int hurt_enemy_index = GetHurtEnemy();
-
   if (hurt_enemy_index > -1) {
     cur_attack_frames_++;
     enemies_[hurt_enemy_index].SetIsHurt(true);
 
+    // Enemy dies
     if (cur_attack_frames_ >= kAttackFrames) {
       enemies_.erase(enemies_.begin() + hurt_enemy_index);
       cur_attack_frames_ = 0;
@@ -213,45 +217,28 @@ bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) {
     return false;
   }
 
+  int next_x;
+  int next_y;
+  // Gets the correct next x and y index for the given position and velocity
   if (velocity.x > 0 && velocity.y == 0) {
-    size_t next_pixel_val = (size_t) (position.x) + (size_t) (velocity.x) + tile_size_;
-    size_t next_x;
-    
-    if (next_pixel_val == game_map_.size() * tile_size_) {
-      next_x = game_map_.size() - 1;
-    } else {
-      next_x = next_pixel_val / tile_size_;
-    }
-
-    if (game_map_[next_x][(size_t) (position.y) / tile_size_] == TileType::Tunnel) {
-      return true;
-    }
+    next_x = GetIndexOfPlayer((size_t) (position.x + velocity.x));
+    next_y = (int) (position.y) / (int) (tile_size_);
 
   } else if (velocity.x == 0 && velocity.y > 0) {
-    size_t next_pixel_val = (size_t) (position.y) + (size_t) (velocity.y) + tile_size_;
-    size_t next_y;
-    
-    if (next_pixel_val == game_map_.size() * tile_size_) {
-      next_y = game_map_.size() - 1;
-    } else {
-      next_y = next_pixel_val / tile_size_;
-    }
-
-    if (game_map_[(size_t) (position.x) / tile_size_][next_y] == TileType::Tunnel) {
-      return true;
-    }
+    next_x = (int) (position.x) / (int) (tile_size_);
+    next_y = GetIndexOfPlayer((size_t) (position.y + velocity.y));
 
   } else if (velocity.x < 0 && velocity.y == 0) {
-    int next_x = ((int) (position.x) + (int) (velocity.x)) / (int) (tile_size_);
-    if (game_map_[next_x][(size_t) (position.y) / tile_size_] == TileType::Tunnel) {
-      return true;
-    }
+    next_x = ((int) (position.x) + (int) (velocity.x)) / (int) (tile_size_);
+    next_y = (int) (position.y) / (int) (tile_size_);
 
   } else {
-    int next_y = ((int) (position.y) + (int) (velocity.y)) / (int) (tile_size_);
-    if (game_map_[(size_t) (position.x) / tile_size_][next_y] == TileType::Tunnel) {
-      return true;
-    }
+    next_y = ((int) (position.y) + (int) (velocity.y)) / (int) (tile_size_);
+    next_x = next_x = (int) (position.x) / (int) (tile_size_);
+  }
+
+  if (game_map_[next_x][next_y] == TileType::Tunnel) {
+    return true;
   }
 
   return false;
@@ -309,35 +296,12 @@ void GameEngine::MoveGhostedEnemy(Enemy& enemy) {
 
 void GameEngine::DigUpTiles(const vec2& player_pos, const vec2& velocity) {
   if (velocity.x > 0 && velocity.y == 0) {
-    // Makes sure right boundary of gameboard is considered part of the game tile to the left of it
-    size_t new_pixel_position = (size_t) (player_pos.x) + tile_size_;
-    size_t new_index;
-
-    if (new_pixel_position == game_map_.size() * tile_size_) {
-      new_index = game_map_.size() - 1;
-    } else {
-      new_index = new_pixel_position / tile_size_;
-    }
-
-    game_map_[new_index][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
-
-  } else if (velocity.x < 0 && velocity.y == 0) {
-    game_map_[(size_t) (player_pos.x) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
+    game_map_[GetIndexOfPlayer((size_t) (player_pos.x))][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
 
   } else if (velocity.y > 0 && velocity.x == 0) {
-    // Makes sure bottom boundary of gameboard is considered part of the game tile above it
-    size_t new_pixel_position = (size_t) (player_pos.y) + tile_size_;
-    size_t new_index;
+    game_map_[(size_t) (player_pos.x) / tile_size_][GetIndexOfPlayer((size_t) (player_pos.y))] = TileType::Tunnel;
 
-    if (new_pixel_position == game_map_.size() * tile_size_) {
-      new_index = game_map_.size() - 1;
-    } else {
-      new_index = new_pixel_position / tile_size_;
-    }
-
-    game_map_[(size_t) (player_pos.x) / tile_size_][new_index] = TileType::Tunnel;
-
-  } else if (velocity.y < 0 && velocity.x == 0) {
+  } else {
     game_map_[(size_t) (player_pos.x) / tile_size_][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
   }
 }
@@ -364,6 +328,20 @@ int GameEngine::GetHurtEnemy() {
   }
 
   return -1;
+}
+
+size_t GameEngine::GetIndexOfPlayer(size_t position) {
+  size_t new_pixel_position = position + tile_size_;
+  size_t new_index;
+
+  // Includes boundary as part of the tile before it
+  if (new_pixel_position == game_map_.size() * tile_size_) {
+    new_index = game_map_.size() - 1;
+  } else {
+    new_index = new_pixel_position / tile_size_;
+  }
+
+  return new_index;
 }
 
 } // namespace dig_dug
