@@ -26,7 +26,7 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
         game_map_[x][y] = TileType::Tunnel;
       }
 
-      if (x == initial_game_state.size() / 2 + 1 && y <= initial_game_state.size() / 2 + 1) {
+      if (x == initial_game_state.size() / 2 && y <= initial_game_state.size() / 2) {
         game_map_[x][y] = TileType::Tunnel;
       }
     }

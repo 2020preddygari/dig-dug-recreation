@@ -26,7 +26,6 @@ vector<vector<TileType>> GameStateGenerator::Generate() {
       cur_row.push_back(TileType::Dirt);
     }
 
-    /* #TODO put srand(time(NULL)) at start of project for truly random numbers every execution*/
     game_map_.push_back(cur_row);
   }
 

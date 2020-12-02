@@ -55,13 +55,21 @@ list(APPEND CORE_SOURCE_FILES src/core/enemy.cpp)
 list(APPEND CORE_SOURCE_FILES src/core/game_engine.cpp)
 list(APPEND CORE_SOURCE_FILES src/core/harpoon.cpp)
 
-list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES})
+list(APPEND SOURCE_FILES    ${CORE_SOURCE_FILES}
+                            src/visualizer/dig_dug_app.cpp)
 
 list(APPEND TEST_FILES tests/game_state_generator_tests.cpp)
 list(APPEND TEST_FILES tests/player_tests.cpp)
 list(APPEND TEST_FILES tests/enemy_tests.cpp)
 list(APPEND TEST_FILES tests/game_engine_tests.cpp)
 list(APPEND TEST_FILES tests/harpoon_tests.cpp)
+
+ci_make_app(
+        APP_NAME        dig_dug_game
+        CINDER_PATH     ${CINDER_PATH}
+        SOURCES         apps/cinder_app_main.cpp ${SOURCE_FILES}
+        INCLUDES        include
+)
 
 ci_make_app(
         APP_NAME    dig-dug-test

@@ -20,6 +20,11 @@ enum class PossibleMove {
 
 class GameEngine {
  public:
+
+  /**
+   * Constructs an empty game engine
+   */
+  GameEngine() = default;
   /**
    * Creates the game map based on the generated starting state
    *
@@ -71,14 +76,14 @@ class GameEngine {
   size_t tile_size_;
   size_t lives_ = 3;
   size_t cur_attack_frames_ = 0;
-  size_t max_harpoon_traveling_frames_;
+  size_t max_harpoon_traveling_frames_{};
   vec2 delayed_turn_velocity_ {0, 0};
-  const double kSpeed = 1;
-  const size_t kEnemyDifficulty = 2;
-  const double kGhostDistanceBuffer = 500;
-  const size_t kAttackFrames = 3;
-  const size_t kHarpoonLength = 3;
-  const size_t kHarpoonSpeed = 100;
+  constexpr static double kSpeed = 1;
+  const static size_t kEnemyDifficulty = 2;
+  constexpr static double kGhostDistanceBuffer = 500;
+  const static size_t kAttackFrames = 3;
+  const static size_t kHarpoonLength = 3;
+  const static size_t kHarpoonSpeed = 100;
 
   /**
    * Moves a normal, walking enemy
