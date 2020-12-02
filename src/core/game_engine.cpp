@@ -247,25 +247,27 @@ bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) {
 bool GameEngine::IsNextTileOpen(const vec2 &velocity, const vec2 &position) {
   if (velocity.x > 0 && velocity.y == 0) {
     size_t next_x = (size_t) (position.x) + (size_t) (velocity.x) + tile_size_;
-    if (next_x <= game_map_.size() * tile_size_) {
+    if (next_x <= game_map_.size() * tile_size_
+        && game_map_[next_x / tile_size_][(size_t) (position.y) / tile_size_] != TileType::Rock) {
       return true;
     }
 
   } else if (velocity.x == 0 && velocity.y > 0) {
     size_t next_y = (size_t) (position.y) + (size_t) (velocity.y) + tile_size_;
-    if (next_y <= game_map_.size() * tile_size_) {
+    if (next_y <= game_map_.size() * tile_size_
+        && game_map_[(size_t) (position.x) / tile_size_][next_y / tile_size_] != TileType::Rock) {
       return true;
     }
 
   } else if (velocity.x < 0 && velocity.y == 0) {
     int next_x = ((int) (position.x) + (int) (velocity.x));
-    if (next_x >= 0) {
+    if (next_x >= 0 && game_map_[next_x / tile_size_][(size_t) (position.y) / tile_size_] != TileType::Rock) {
       return true;
     }
 
   } else {
     int next_y = ((int) (position.y) + (int) (velocity.y));
-    if (next_y >= 0) {
+    if (next_y >= 0 && game_map_[(size_t) (position.x) / tile_size_][next_y / tile_size_] != TileType::Rock) {
       return true;
     }
   }
@@ -295,6 +297,11 @@ void GameEngine::MoveGhostedEnemy(Enemy& enemy) {
 }
 
 void GameEngine::DigUpTiles(const vec2& player_pos, const vec2& velocity) {
+  // So player does not dig up tile it has not entered yet
+  if ((size_t) (player_pos.x) % tile_size_ == 0 && (size_t) (player_pos.y) % tile_size_ == 0) {
+    return;
+  }
+
   if (velocity.x > 0 && velocity.y == 0) {
     game_map_[GetIndexOfPlayer((size_t) (player_pos.x))][(size_t) (player_pos.y) / tile_size_] = TileType::Tunnel;
 
