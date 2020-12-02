@@ -27,8 +27,24 @@ void DigDugApp::update() {
 
 }
 
-void DigDugApp::keyDown(ci::app::KeyEvent event) {
-  AppBase::keyDown(event);
+void DigDugApp::keyDown(KeyEvent event) {
+  switch (event.getCode()) {
+    case KeyEvent::KEY_RIGHT:
+      engine_.MovePlayer({1, 0});
+      break;
+
+    case KeyEvent::KEY_DOWN:
+      engine_.MovePlayer({0, 1});
+      break;
+
+    case KeyEvent::KEY_LEFT:
+      engine_.MovePlayer({-1, 0});
+      break;
+
+    case KeyEvent::KEY_UP:
+      engine_.MovePlayer({0, -1});
+      break;
+  }
 }
 
 void DigDugApp::DrawBoard() {
@@ -43,12 +59,10 @@ void DigDugApp::DrawBoard() {
         Rectf block({x_pixel_val + kMargin, y_pixel_val + kMargin},
                     {x_pixel_val + kTileSize + kMargin, y_pixel_val + kTileSize + kMargin});
 
-        Texture2dRef dirt_block_texture = Texture2d::create(loadImage("../../../images/dirt_block.png"));
-        ci::gl::draw(dirt_block_texture, block);
+        ci::gl::draw(kDirtTexture, block);
 
         if (game_map[x][y] == TileType::Rock) {
-          Texture2dRef rock_texture = Texture2d::create(loadImage("../../../images/rock.png"));
-          ci::gl::draw(rock_texture, block);
+          ci::gl::draw(kRockTexture, block);
         }
       }
     }
@@ -56,7 +70,17 @@ void DigDugApp::DrawBoard() {
 }
 
 void DigDugApp::DrawPlayer() {
+  Player player = engine_.GetPlayer();
+  vec2 position = player.GetPosition();
 
+  Rectf player_rect({position.x + kMargin, position.y + kMargin},
+                    {position.x + kTileSize + kMargin, position.y + kTileSize + kMargin});
+
+  if (player.GetOrientation() == CharacterOrientation::Right) {
+    ci::gl::draw(kPlayerRightTexture, player_rect);
+  } else {
+    ci::gl::draw(kPlayerLeftTexture, player_rect);
+  }
 }
 
 void DigDugApp::DrawEnemies() {

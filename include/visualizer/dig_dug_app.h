@@ -12,6 +12,7 @@ namespace dig_dug {
 using ci::gl::Texture2dRef;
 using ci::gl::Texture2d;
 using ci::loadImage;
+using ci::app::KeyEvent;
 
  class DigDugApp : public ci::app::App {
   public:
@@ -42,11 +43,18 @@ using ci::loadImage;
    GameEngine engine_;
    size_t live_lost_num_frames_ = 0;
    bool is_game_over_ = false;
+
    const size_t kTileSize = 100;
    const size_t kMaxLiveLostFrames = 10;
    const double kWindowSize = 2000;
    const double kMargin = 100;
    const double kBoardToWindowRatio = 0.75;
+
+   const Texture2dRef kDirtTexture = Texture2d::create(loadImage("../../../images/dirt_block.png"));
+   const Texture2dRef kRockTexture = Texture2d::create(loadImage("../../../images/rock.png"));
+   const Texture2dRef kPlayerLeftTexture = Texture2d::create(loadImage("../../../images/dig_dug_player_left.png"));
+   const Texture2dRef kPlayerRightTexture = Texture2d::create(loadImage("../../../images/dig_dug_player_right.png"));
+
 
    /**
     * Draws the dirt tiles, tunnels, and rocks
