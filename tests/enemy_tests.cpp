@@ -1,9 +1,9 @@
 #include <catch2/catch.hpp>
 #include "core/enemy.h"
-#include "core/game_state_generator.h"
 
 using dig_dug::Enemy;
 using dig_dug::TileType;
+using dig_dug::CharacterOrientation;
 using glm::vec2;
 
 TEST_CASE("Enemy Movement tests") {
@@ -39,5 +39,20 @@ TEST_CASE("Enemy Movement tests") {
 
     vec2 position = {6, 7};
     REQUIRE(enemy.GetPosition() == position);
+  }
+
+  SECTION("Enemy orientation") {
+    Enemy enemy({7, 7}, {1, 0}, TileType::Fygar);
+
+    SECTION("Check updated to right") {
+      enemy.Move();
+      REQUIRE(enemy.GetOrientation() == CharacterOrientation::Right);
+    }
+
+    SECTION("Check updated to left") {
+      enemy.SetVelocity({-1, 0});
+      enemy.Move();
+      REQUIRE(enemy.GetOrientation() == CharacterOrientation::Left);
+    }
   }
 }

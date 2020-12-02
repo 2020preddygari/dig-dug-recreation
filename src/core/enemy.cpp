@@ -28,6 +28,12 @@ vec2 Enemy::GetVelocity() {
 
 void Enemy::SetVelocity(const vec2& velocity) {
   velocity_ = velocity;
+
+  if (velocity.x > 0) {
+    orientation_ = CharacterOrientation::Right;
+  } else if (velocity.x < 0) {
+    orientation_ = CharacterOrientation::Left;
+  }
 }
 
 bool Enemy::GetIsGhost() {
@@ -48,6 +54,10 @@ bool Enemy::GetIsHurt() {
 
 void Enemy::SetIsHurt(bool val) {
   is_hurt_ = val;
+}
+
+CharacterOrientation Enemy::GetOrientation() {
+  return orientation_;
 }
 
 } // namespace dig_dug

@@ -13,6 +13,12 @@ void Player::Move(const vec2& velocity) {
   if (velocity != kZeroVector) {
     prev_velocity_ = velocity;
   }
+
+  if (velocity.x > 0) {
+    orientation_ = CharacterOrientation::Right;
+  } else if (velocity.x < 0) {
+    orientation_ = CharacterOrientation::Left;
+  }
 }
 
 vec2 Player::GetPosition() {
@@ -21,6 +27,10 @@ vec2 Player::GetPosition() {
 
 vec2 Player::GetPrevVelocity() {
   return prev_velocity_;
+}
+
+CharacterOrientation Player::GetOrientation() {
+  return orientation_;
 }
 
 

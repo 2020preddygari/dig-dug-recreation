@@ -6,6 +6,11 @@ namespace dig_dug {
 
 using glm::vec2;
 
+enum class CharacterOrientation {
+  Left,
+  Right
+};
+
 class Player {
  public:
   /**
@@ -27,8 +32,11 @@ class Player {
 
   vec2 GetPrevVelocity();
 
+  CharacterOrientation GetOrientation();
+
  private:
   vec2 position_;
   vec2 prev_velocity_ {1, 0};
+  CharacterOrientation orientation_ = CharacterOrientation::Right;
 };
 }

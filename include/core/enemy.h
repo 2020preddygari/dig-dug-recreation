@@ -2,10 +2,12 @@
 
 #include <cinder/gl/gl.h>
 #include "game_state_generator.h"
+#include "player.h"
 
 namespace dig_dug {
 
 using glm::vec2;
+using dig_dug::CharacterOrientation;
 
 class Enemy {
  public:
@@ -38,11 +40,14 @@ class Enemy {
 
   void SetIsHurt(bool val);
 
+  CharacterOrientation GetOrientation();
+
  private:
   vec2 position_;
   vec2 velocity_;
   bool is_ghost_;
   bool is_hurt_;
   TileType type_;
+  CharacterOrientation orientation_ = CharacterOrientation::Right;
 };
 }

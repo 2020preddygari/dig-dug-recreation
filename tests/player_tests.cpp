@@ -2,6 +2,7 @@
 #include "core/player.h"
 
 using dig_dug::Player;
+using dig_dug::CharacterOrientation;
 using glm::vec2;
 
 TEST_CASE("Player Movement tests") {
@@ -42,6 +43,20 @@ TEST_CASE("Player Movement tests") {
       player.Move({1, 0});
       player.Move({0, 0});
       REQUIRE(player.GetPrevVelocity() == prev_velocity);
+    }
+  }
+
+  SECTION("Player orientation") {
+    Player player ({7, 7});
+
+    SECTION("Check updated to right") {
+      player.Move({1, 0});
+      REQUIRE(player.GetOrientation() == CharacterOrientation::Right);
+    }
+
+    SECTION("Check updated to left") {
+      player.Move({-1, 0});
+      REQUIRE(player.GetOrientation() == CharacterOrientation::Left);
     }
   }
 }
