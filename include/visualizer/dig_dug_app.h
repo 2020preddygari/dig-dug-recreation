@@ -54,6 +54,10 @@ using ci::app::KeyEvent;
    const Texture2dRef kRockTexture = Texture2d::create(loadImage("../../../images/rock.png"));
    const Texture2dRef kPlayerLeftTexture = Texture2d::create(loadImage("../../../images/dig_dug_player_left.png"));
    const Texture2dRef kPlayerRightTexture = Texture2d::create(loadImage("../../../images/dig_dug_player_right.png"));
+   const Texture2dRef kHarpoonDownTexture = Texture2d::create(loadImage("../../../images/harpoon_down.png"));
+   const Texture2dRef kHarpoonLeftTexture = Texture2d::create(loadImage("../../../images/harpoon_left.png"));
+   const Texture2dRef kHarpoonRightTexture = Texture2d::create(loadImage("../../../images/harpoon_right.png"));
+   const Texture2dRef kHarpoonUpTexture = Texture2d::create(loadImage("../../../images/harpoon_up.png"));
 
 
    /**
@@ -70,5 +74,10 @@ using ci::app::KeyEvent;
     * Draws the enemies
     */
    void DrawEnemies();
+
+   /**
+    * Draws the harpoon
+    */
+   void DrawHarpoon();
 };
 }

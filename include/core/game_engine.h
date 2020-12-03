@@ -66,6 +66,8 @@ class GameEngine {
 
   bool GetIsAttacking();
 
+  Harpoon GetHarpoon();
+
  private:
   vector<vector<TileType>> game_map_;
   Player player_;

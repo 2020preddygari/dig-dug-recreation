@@ -29,13 +29,14 @@ class Harpoon {
    */
   void Move();
 
-  vec2 GetArrowPosition();
+  vec2 GetArrowPosition() const;
 
-  double GetDistanceTraveled();
+  double GetDistanceTraveled() const;
+
+  vec2 GetVelocity() const;
 
  private:
   vec2 arrow_;
-  vec2 start_position_;
   vec2 velocity_;
   double distance_traveled_ = 0;
 };

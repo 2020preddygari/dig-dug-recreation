@@ -171,6 +171,10 @@ bool GameEngine::GetIsAttacking() {
   return is_attacking_;
 }
 
+Harpoon GameEngine::GetHarpoon() {
+  return harpoon_;
+}
+
 void GameEngine::MoveWalkingEnemy(Enemy& enemy) {
   vec2 cur_position = enemy.GetPosition();
   vec2 cur_velocity = enemy.GetVelocity();

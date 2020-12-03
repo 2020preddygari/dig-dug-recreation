@@ -29,6 +29,10 @@ void DigDugApp::update() {
 
 void DigDugApp::keyDown(KeyEvent event) {
   switch (event.getCode()) {
+    case KeyEvent::KEY_SPACE:
+      engine_.AttackEnemy();
+      break;
+
     case KeyEvent::KEY_RIGHT:
       engine_.MovePlayer({1, 0});
       break;
@@ -81,10 +85,44 @@ void DigDugApp::DrawPlayer() {
   } else {
     ci::gl::draw(kPlayerLeftTexture, player_rect);
   }
+
+  if (engine_.GetIsAttacking()) {
+    DrawHarpoon();
+  }
 }
 
 void DigDugApp::DrawEnemies() {
 
+}
+
+void DigDugApp::DrawHarpoon() {
+  Player player = engine_.GetPlayer();
+  vec2 position = player.GetPosition();
+
+  Harpoon harpoon = engine_.GetHarpoon();
+  vec2 velocity = harpoon.GetVelocity();
+  vec2 arrow_pos = harpoon.GetArrowPosition();
+
+  if (velocity.x > 0 && velocity.y == 0) {
+    Rectf harpoon_rect ({position.x + kTileSize + kMargin, position.y + kMargin},
+                        {arrow_pos.x + kTileSize + kMargin, arrow_pos.y + kTileSize + kMargin});
+    ci::gl::draw(kHarpoonRightTexture, harpoon_rect);
+
+  } else if (velocity.x < 0 && velocity.y == 0) {
+    Rectf harpoon_rect ({arrow_pos.x + kMargin, arrow_pos.y + kMargin},
+                        {position.x + kMargin, position.y + kTileSize + kMargin});
+    ci::gl::draw(kHarpoonLeftTexture, harpoon_rect);
+
+  } else if (velocity.y > 0 && velocity.x == 0) {
+    Rectf harpoon_rect({position.x + kMargin, position.y + kTileSize + kMargin},
+                       {arrow_pos.x + kTileSize + kMargin, arrow_pos.y + kTileSize + kMargin});
+    ci::gl::draw(kHarpoonDownTexture, harpoon_rect);
+
+  } else {
+    Rectf harpoon_rect({arrow_pos.x + kMargin, arrow_pos.y + kMargin},
+                       {position.x + kTileSize + kMargin, position.y + kTileSize + kMargin});
+    ci::gl::draw(kHarpoonUpTexture, harpoon_rect);
+  }
 }
 
 } // namespace dig_dug
