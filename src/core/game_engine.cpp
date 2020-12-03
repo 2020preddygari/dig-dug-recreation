@@ -39,9 +39,12 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
 
 void GameEngine::MoveEnemies() {
   // Turns an enemy into a ghost if random number below enemy_ghost_percentage_
-  if ((size_t) (rand() % 100) < enemy_ghost_percentage_) {
+  if ((size_t) (rand() % 1000) < enemy_ghost_percentage_ * 100) {
     size_t ghost_index = rand() % enemies_.size();
-    enemies_[ghost_index].SetIsGhost();
+
+    if (!enemies_[ghost_index].GetIsGhost()) {
+      enemies_[ghost_index].SetIsGhost();
+    }
   }
 
   for (size_t index = 0; index < enemies_.size(); index++) {
@@ -285,11 +288,17 @@ void GameEngine::MoveGhostedEnemy(Enemy& enemy) {
   vec2 distance_vector = player_position - enemy_position;
   double distance = glm::length(distance_vector);
 
+  if (game_map_[(size_t) (enemy_position.x) / tile_size_][(size_t) (enemy_position.y) / tile_size_] == TileType::Dirt ||
+      game_map_[(size_t) (enemy_position.x) / tile_size_][(size_t) (enemy_position.y) / tile_size_] == TileType::Rock) {
+    enemy.SetIsInDirt(true);
+  }
+
   // Enemy walks again and is not ghost anymore
   if (game_map_[(size_t) (enemy_position.x) / tile_size_][(size_t) (enemy_position.y) / tile_size_] == TileType::Tunnel
-      && distance < kGhostDistanceBuffer) {
+      && distance < kGhostDistanceBuffer && enemy.GetIsInDirt()) {
     enemy.SetIsGhost();
-    enemy.SetPosition({(enemy_position.x / tile_size_) * tile_size_, (enemy_position.y / tile_size_) * tile_size_});
+    enemy.SetPosition({((size_t) (enemy_position.x) / tile_size_) * tile_size_,
+                       ((size_t) (enemy_position.y) / tile_size_) * tile_size_});
     // Makes sure velocity of enemy is correct now that it is walking again
     enemy.SetVelocity({kSpeed, 0});
     MoveWalkingEnemy(enemy);

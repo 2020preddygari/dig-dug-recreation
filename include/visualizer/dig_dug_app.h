@@ -58,6 +58,11 @@ using ci::app::KeyEvent;
    const Texture2dRef kHarpoonLeftTexture = Texture2d::create(loadImage("../../../images/harpoon_left.png"));
    const Texture2dRef kHarpoonRightTexture = Texture2d::create(loadImage("../../../images/harpoon_right.png"));
    const Texture2dRef kHarpoonUpTexture = Texture2d::create(loadImage("../../../images/harpoon_up.png"));
+   const Texture2dRef kFygarLeftTexture = Texture2d::create(loadImage("../../../images/fygar_left.png"));
+   const Texture2dRef kFygarRightTexture = Texture2d::create(loadImage("../../../images/fygar_right.png"));
+   const Texture2dRef kPookaLeftTexture = Texture2d::create(loadImage("../../../images/pooka_left.png"));
+   const Texture2dRef kPookaRightTexture = Texture2d::create(loadImage("../../../images/pooka_right.png"));
+   const Texture2dRef kGhostTexture = Texture2d::create(loadImage("../../../images/ghost.png"));
 
 
    /**

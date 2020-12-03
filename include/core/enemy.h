@@ -42,11 +42,16 @@ class Enemy {
 
   CharacterOrientation GetOrientation();
 
+  bool GetIsInDirt();
+
+  void SetIsInDirt(bool in_dirt);
+
  private:
   vec2 position_;
   vec2 velocity_;
-  bool is_ghost_;
-  bool is_hurt_;
+  bool is_ghost_ = false;
+  bool is_in_dirt_ = false;
+  bool is_hurt_ = false;
   TileType type_;
   CharacterOrientation orientation_ = CharacterOrientation::Right;
 };

@@ -5,8 +5,6 @@ namespace dig_dug {
 Enemy::Enemy(const vec2& position, const vec2& velocity, TileType enemy_type) {
   position_ = position;
   velocity_ = velocity;
-  is_ghost_ = false;
-  is_hurt_ = false;
   type_ = enemy_type;
 }
 
@@ -42,6 +40,10 @@ bool Enemy::GetIsGhost() {
 
 void Enemy::SetIsGhost() {
   is_ghost_ = !is_ghost_;
+
+  if (!is_ghost_) {
+    is_in_dirt_ = false;
+  }
 }
 
 TileType Enemy::GetType() {
@@ -58,6 +60,14 @@ void Enemy::SetIsHurt(bool val) {
 
 CharacterOrientation Enemy::GetOrientation() {
   return orientation_;
+}
+
+bool Enemy::GetIsInDirt() {
+  return is_in_dirt_;
+}
+
+void Enemy::SetIsInDirt(bool in_dirt) {
+  is_in_dirt_ = in_dirt;
 }
 
 } // namespace dig_dug

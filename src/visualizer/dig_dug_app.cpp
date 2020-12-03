@@ -3,7 +3,7 @@
 namespace dig_dug {
 
 DigDugApp::DigDugApp() {
-  srand((unsigned int) (time(NULL)));
+  srand(1);
   ci::app::setWindowSize((int) (kWindowSize), (int) (kWindowSize));
 
   generator_.Generate();
@@ -24,7 +24,11 @@ void DigDugApp::draw() {
 }
 
 void DigDugApp::update() {
-
+  if (engine_.GetLives() > 0) {
+    engine_.MoveEnemies();
+  } else {
+    is_game_over_ = true;
+  }
 }
 
 void DigDugApp::keyDown(KeyEvent event) {
@@ -92,7 +96,33 @@ void DigDugApp::DrawPlayer() {
 }
 
 void DigDugApp::DrawEnemies() {
+  vector<Enemy> enemies = engine_.GetEnemies();
 
+  for (Enemy enemy : enemies)  {
+    vec2 position = enemy.GetPosition();
+    TileType type = enemy.GetType();
+    CharacterOrientation orientation = enemy.GetOrientation();
+    Rectf enemy_rect({position.x + kMargin, position.y + kMargin},
+                     {position.x + kTileSize + kMargin, position.y + kTileSize + kMargin});
+
+    if (enemy.GetIsGhost()) {
+      ci::gl::draw(kGhostTexture, enemy_rect);
+
+    } else if (type == TileType::Fygar) {
+      if (orientation == CharacterOrientation::Left) {
+        ci::gl::draw(kFygarLeftTexture, enemy_rect);
+      } else {
+        ci::gl::draw(kFygarRightTexture, enemy_rect);
+      }
+
+    } else {
+      if (orientation == CharacterOrientation::Left) {
+        ci::gl::draw(kPookaLeftTexture, enemy_rect);
+      } else {
+        ci::gl::draw(kPookaRightTexture, enemy_rect);
+      }
+    }
+  }
 }
 
 void DigDugApp::DrawHarpoon() {
