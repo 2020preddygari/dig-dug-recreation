@@ -18,14 +18,32 @@ void DigDugApp::draw() {
   ci::gl::color(ci::Color("white"));
   ci::gl::drawStrokedRect(game_board_background);
 
+
+  DrawLives();
   DrawBoard();
   DrawPlayer();
   DrawEnemies();
 }
 
 void DigDugApp::update() {
-  if (engine_.GetLives() > 0) {
-    engine_.MoveEnemies();
+  if (engine_.GetLives() > 0 && live_lost_num_frames_ == 0) {
+    if (engine_.IsPlayerDead()) {
+      live_lost_num_frames_++;
+    } else {
+      engine_.MoveEnemies();
+    }
+
+  } else if (live_lost_num_frames_ > 0){
+    live_lost_num_frames_++;
+
+    if (live_lost_num_frames_ > kMaxLiveLostFrames) {
+      live_lost_num_frames_ = 0;
+      size_t new_lives = engine_.GetLives();
+      generator_.Generate();
+      engine_ = GameEngine(generator_.GetGameMap(), kTileSize);
+      engine_.SetLives(new_lives);
+    }
+
   } else {
     is_game_over_ = true;
   }
@@ -152,6 +170,18 @@ void DigDugApp::DrawHarpoon() {
     Rectf harpoon_rect({arrow_pos.x + kMargin, arrow_pos.y + kMargin},
                        {position.x + kTileSize + kMargin, position.y + kTileSize + kMargin});
     ci::gl::draw(kHarpoonUpTexture, harpoon_rect);
+  }
+}
+
+void DigDugApp::DrawLives() {
+  const size_t kPlayerWidth = 90;
+  const size_t kPlayerHeight = 90;
+  double end_of_game_board = kMargin + kBoardToWindowRatio * kWindowSize;
+
+  for (size_t life = 0; life < engine_.GetLives(); life++) {
+    double start_x = end_of_game_board + kMargin / 2 + life * 100;
+    Rectf player_rect({start_x, kMargin}, {start_x + kPlayerWidth, kMargin + kPlayerHeight});
+    ci::gl::draw(kPlayerRightTexture, player_rect);
   }
 }
 

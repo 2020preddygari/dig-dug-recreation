@@ -117,7 +117,7 @@ void GameEngine::MovePlayer(const vec2& velocity) {
   }
 }
 
-bool GameEngine::CheckPlayerDeath() {
+bool GameEngine::IsPlayerDead() {
   for (Enemy enemy : enemies_) {
     vec2 enemy_pos = enemy.GetPosition();
     vec2 player_pos = player_.GetPosition();
@@ -173,6 +173,10 @@ vector<Enemy> GameEngine::GetEnemies() {
 
 size_t GameEngine::GetLives() {
   return lives_;
+}
+
+void GameEngine::SetLives(size_t num_lives) {
+  lives_ = num_lives;
 }
 
 bool GameEngine::GetIsAttacking() {

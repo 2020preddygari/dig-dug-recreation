@@ -49,7 +49,7 @@ class GameEngine {
    *
    * @return true if player dies, false if not
    */
-  bool CheckPlayerDeath();
+  bool IsPlayerDead();
 
   /*
    * Player shoots the harpoon
@@ -63,6 +63,8 @@ class GameEngine {
   vector<Enemy> GetEnemies();
 
   size_t GetLives();
+
+  void SetLives(size_t num_lives);
 
   bool GetIsAttacking();
 
@@ -81,7 +83,7 @@ class GameEngine {
   size_t max_harpoon_traveling_frames_;
   vec2 delayed_turn_velocity_ {0, 0};
   constexpr static double kPlayerSpeed = 10;
-  constexpr static double kEnemySpeed = 2;
+  constexpr static double kEnemySpeed = 4;
   constexpr static double kEnemyDifficulty = 0.01;
   constexpr static double kGhostDistanceBuffer = 500;
   const static size_t kAttackFrames = 20;

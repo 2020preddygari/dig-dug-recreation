@@ -45,7 +45,7 @@ using ci::app::KeyEvent;
    bool is_game_over_ = false;
 
    const size_t kTileSize = 100;
-   const size_t kMaxLiveLostFrames = 10;
+   const size_t kMaxLiveLostFrames = 100;
    const double kWindowSize = 2000;
    const double kMargin = 100;
    const double kBoardToWindowRatio = 0.75;
@@ -84,5 +84,10 @@ using ci::app::KeyEvent;
     * Draws the harpoon
     */
    void DrawHarpoon();
+
+   /**
+    * Draws the number of lives the player has
+    */
+   void DrawLives();
 };
 }
