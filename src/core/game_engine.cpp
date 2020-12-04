@@ -39,7 +39,7 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
 
 void GameEngine::MoveEnemies() {
   // Turns an enemy into a ghost if random number below enemy_ghost_percentage_
-  if ((size_t) (rand() % 1000) < enemy_ghost_percentage_ * 100) {
+  if ((size_t) (rand() % 10000) < enemy_ghost_percentage_ * 100) {
     size_t ghost_index = rand() % enemies_.size();
 
     if (!enemies_[ghost_index].GetIsGhost()) {

@@ -82,7 +82,7 @@ class GameEngine {
   vec2 delayed_turn_velocity_ {0, 0};
   constexpr static double kPlayerSpeed = 10;
   constexpr static double kEnemySpeed = 2;
-  constexpr static double kEnemyDifficulty = 0.001;
+  constexpr static double kEnemyDifficulty = 0.01;
   constexpr static double kGhostDistanceBuffer = 500;
   const static size_t kAttackFrames = 20;
   const static size_t kHarpoonLength = 10;
