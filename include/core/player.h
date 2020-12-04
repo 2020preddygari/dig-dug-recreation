@@ -35,8 +35,9 @@ class Player {
   CharacterOrientation GetOrientation();
 
  private:
+  constexpr static double kSpeed = 5;
   vec2 position_;
-  vec2 prev_velocity_ {1, 0};
+  vec2 prev_velocity_ {kSpeed, 0};
   CharacterOrientation orientation_ = CharacterOrientation::Right;
 };
 }

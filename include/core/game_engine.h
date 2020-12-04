@@ -78,14 +78,15 @@ class GameEngine {
   size_t tile_size_;
   size_t lives_ = 3;
   size_t cur_attack_frames_ = 0;
-  size_t max_harpoon_traveling_frames_{};
+  size_t max_harpoon_traveling_frames_;
   vec2 delayed_turn_velocity_ {0, 0};
-  constexpr static double kSpeed = 10;
-  constexpr static double kEnemyDifficulty = 0.01;
+  constexpr static double kPlayerSpeed = 10;
+  constexpr static double kEnemySpeed = 2;
+  constexpr static double kEnemyDifficulty = 0.001;
   constexpr static double kGhostDistanceBuffer = 500;
-  const static size_t kAttackFrames = 3;
-  const static size_t kHarpoonLength = 3;
-  const static size_t kHarpoonSpeed = 100;
+  const static size_t kAttackFrames = 20;
+  const static size_t kHarpoonLength = 10;
+  const static size_t kHarpoonSpeed = 20;
 
   /**
    * Moves a normal, walking enemy

@@ -16,9 +16,9 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
 
         vec2 velocity;
         if (game_map_[x + 1][y] == TileType::Tunnel) {
-          velocity = {kSpeed, 0};
+          velocity = {kEnemySpeed, 0};
         } else if (game_map_[x][y + 1] == TileType::Tunnel) {
-          velocity = {0, kSpeed};
+          velocity = {0, kEnemySpeed};
         }
 
         Enemy enemy (position, velocity, game_map_[x][y]);
@@ -34,7 +34,7 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
 
   enemy_ghost_percentage_ = enemies_.size() * kEnemyDifficulty;
   tile_size_ = tile_size;
-  max_harpoon_traveling_frames_ = tile_size * kHarpoonLength / (size_t) (kSpeed);
+  max_harpoon_traveling_frames_ = tile_size * kHarpoonLength / (size_t) (kEnemySpeed);
 }
 
 void GameEngine::MoveEnemies() {
@@ -45,6 +45,11 @@ void GameEngine::MoveEnemies() {
     if (!enemies_[ghost_index].GetIsGhost()) {
       enemies_[ghost_index].SetIsGhost();
     }
+  }
+
+  int enemy_hurt_index = GetHurtEnemy();
+  if (enemy_hurt_index > -1) {
+    enemies_[enemy_hurt_index].SetIsHurt(true);
   }
 
   for (size_t index = 0; index < enemies_.size(); index++) {
@@ -75,7 +80,7 @@ void GameEngine::MovePlayer(const vec2& velocity) {
 
   const vec2 kZeroVelocity {0, 0};
   vec2 position = player_.GetPosition();
-  vec2 velocity_with_speed {velocity.x * kSpeed, velocity.y * kSpeed};
+  vec2 velocity_with_speed {velocity.x * kPlayerSpeed, velocity.y * kPlayerSpeed};
   vec2 opposite_velocity {velocity_with_speed.x * -1, velocity_with_speed.y * -1};
   vec2 player_prev_speed = player_.GetPrevVelocity();
   bool is_next_tile_open = IsNextTileOpen(velocity_with_speed, player_.GetPosition());
@@ -241,7 +246,7 @@ bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) {
 
   } else {
     next_y = ((int) (position.y) + (int) (velocity.y)) / (int) (tile_size_);
-    next_x = next_x = (int) (position.x) / (int) (tile_size_);
+    next_x = (int) (position.x) / (int) (tile_size_);
   }
 
   if (game_map_[next_x][next_y] == TileType::Tunnel) {
@@ -300,11 +305,11 @@ void GameEngine::MoveGhostedEnemy(Enemy& enemy) {
     enemy.SetPosition({((size_t) (enemy_position.x) / tile_size_) * tile_size_,
                        ((size_t) (enemy_position.y) / tile_size_) * tile_size_});
     // Makes sure velocity of enemy is correct now that it is walking again
-    enemy.SetVelocity({kSpeed, 0});
+    enemy.SetVelocity({kEnemySpeed, 0});
     MoveWalkingEnemy(enemy);
 
   } else {
-    vec2 new_velocity {distance_vector.x / distance * kSpeed, distance_vector.y / distance * kSpeed};
+    vec2 new_velocity {distance_vector.x / distance * kEnemySpeed, distance_vector.y / distance * kEnemySpeed};
     enemy.SetVelocity(new_velocity);
   }
 }
