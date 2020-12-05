@@ -123,7 +123,7 @@ bool GameEngine::IsPlayerDead() {
     double distance = glm::length(enemy_pos - player_pos);
 
     if (!enemy.GetIsGhost() && distance < tile_size_) {
-      lives_--;
+      num_lives_--;
       return true;
     }
   }
@@ -170,12 +170,12 @@ vector<Enemy> GameEngine::GetEnemies() {
   return enemies_;
 }
 
-size_t GameEngine::GetLives() {
-  return lives_;
+size_t GameEngine::GetNumLives() {
+  return num_lives_;
 }
 
-void GameEngine::SetLives(size_t num_lives) {
-  lives_ = num_lives;
+void GameEngine::SetNumLives(size_t num_lives) {
+  num_lives_ = num_lives;
 }
 
 bool GameEngine::GetIsAttacking() {

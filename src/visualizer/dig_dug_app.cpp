@@ -31,13 +31,15 @@ void DigDugApp::update() {
   vector<Enemy> enemies = engine_.GetEnemies();
 
   if (enemies.empty()) {
+    size_t num_lives = engine_.GetNumLives();
     live_lost_num_frames_ = 0;
     generator_.IncreaseLevel();
     generator_.Generate();
     engine_ = GameEngine(generator_.GetGameMap(), kTileSize);
+    engine_.SetNumLives(num_lives);
   }
 
-  if (engine_.GetLives() > 0 && live_lost_num_frames_ == 0) {
+  if (engine_.GetNumLives() > 0 && live_lost_num_frames_ == 0) {
     if (engine_.IsPlayerDead()) {
       live_lost_num_frames_++;
     } else {
@@ -49,10 +51,10 @@ void DigDugApp::update() {
 
     if (live_lost_num_frames_ > kMaxLiveLostFrames) {
       live_lost_num_frames_ = 0;
-      size_t new_lives = engine_.GetLives();
+      size_t new_lives = engine_.GetNumLives();
       generator_.Generate();
       engine_ = GameEngine(generator_.GetGameMap(), kTileSize);
-      engine_.SetLives(new_lives);
+      engine_.SetNumLives(new_lives);
     }
 
   } else {
@@ -189,7 +191,7 @@ void DigDugApp::DrawLives() {
   const size_t kPlayerHeight = 90;
   double end_of_game_board = kMargin + kBoardToWindowRatio * kWindowSize;
 
-  for (size_t life = 0; life < engine_.GetLives(); life++) {
+  for (size_t life = 0; life < engine_.GetNumLives(); life++) {
     double start_x = end_of_game_board + kMargin / 2 + life * 100;
     Rectf player_rect({start_x, kMargin}, {start_x + kPlayerWidth, kMargin + kPlayerHeight});
     ci::gl::draw(kPlayerRightTexture, player_rect);

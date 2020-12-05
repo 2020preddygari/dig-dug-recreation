@@ -62,9 +62,9 @@ class GameEngine {
 
   vector<Enemy> GetEnemies();
 
-  size_t GetLives();
+  size_t GetNumLives();
 
-  void SetLives(size_t num_lives);
+  void SetNumLives(size_t num_lives);
 
   bool GetIsAttacking();
 
@@ -78,7 +78,7 @@ class GameEngine {
   bool is_attacking_ = false;
   double enemy_ghost_percentage_;
   size_t tile_size_;
-  size_t lives_ = 3;
+  size_t num_lives_ = 3;
   size_t cur_attack_frames_ = 0;
   size_t max_harpoon_traveling_frames_;
   vec2 delayed_turn_velocity_ {0, 0};
