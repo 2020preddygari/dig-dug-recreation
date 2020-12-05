@@ -41,10 +41,10 @@ class GameStateGenerator {
  private:
   size_t level_ = 1;
   TileType cur_enemy = TileType::Pooka;
-  const size_t kBoardDimension_ = 15;
-  const size_t kTunnelSize_ = 3;
+  const static size_t kBoardDimension_ = 15;
+  const static size_t kTunnelSize_ = 3;
   // minimum distance between enemies
-  const size_t kEnemyBuffer = 1;
+  const static size_t kEnemyBuffer = 1;
   vector<vector<TileType>> game_map_;
 
   /**

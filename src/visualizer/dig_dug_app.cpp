@@ -13,21 +13,35 @@ DigDugApp::DigDugApp() {
 void DigDugApp::draw() {
   ci::Color8u background_color(0, 0, 0);
   ci::gl::clear(background_color);
-  Rectf game_board_background({kMargin, kMargin},{kMargin + kBoardToWindowRatio * kWindowSize,
-                                                      kMargin + kBoardToWindowRatio * kWindowSize});
-  ci::gl::color(ci::Color("white"));
-  ci::gl::drawStrokedRect(game_board_background);
-  ci::gl::drawStringCentered("Level " + std::to_string(generator_.GetLevel()),
-                             {kWindowSize / 2, kMargin / 4}, ci::Color("white"),
-                             ci::Font("Helvetica Neue", (float) (kMargin * 3 / 4)));
 
-  DrawLives();
-  DrawBoard();
-  DrawPlayer();
-  DrawEnemies();
+  if (is_game_over_) {
+    ci::gl::drawStringCentered("Game Over",
+                               {kWindowSize / 2, kWindowSize * 3 / 8}, ci::Color("red"),
+                               ci::Font("Helvetica Neue", (float) (kWindowSize / 5)));
+    ci::gl::drawStringCentered("Press enter to start a new game",
+                               {kWindowSize / 2, kWindowSize * 4 / 5}, ci::Color("white"),
+                               ci::Font("Helvetica Neue", (float) (kWindowSize / 16)));
+  } else {
+    Rectf game_board_background({kMargin, kMargin},{kMargin + kBoardToWindowRatio * kWindowSize,
+                                                    kMargin + kBoardToWindowRatio * kWindowSize});
+    ci::gl::color(ci::Color("white"));
+    ci::gl::drawStrokedRect(game_board_background);
+    ci::gl::drawStringCentered("Level " + std::to_string(generator_.GetLevel()),
+                               {kWindowSize / 2, kMargin / 4}, ci::Color("white"),
+                               ci::Font("Helvetica Neue", (float) (kMargin * 3 / 4)));
+
+    DrawLives();
+    DrawBoard();
+    DrawPlayer();
+    DrawEnemies();
+  }
 }
 
 void DigDugApp::update() {
+  if (is_game_over_) {
+    return;
+  }
+
   vector<Enemy> enemies = engine_.GetEnemies();
 
   if (enemies.empty()) {
@@ -37,9 +51,8 @@ void DigDugApp::update() {
     generator_.Generate();
     engine_ = GameEngine(generator_.GetGameMap(), kTileSize);
     engine_.SetNumLives(num_lives);
-  }
 
-  if (engine_.GetNumLives() > 0 && live_lost_num_frames_ == 0) {
+  } else if (engine_.GetNumLives() > 0 && live_lost_num_frames_ == 0) {
     if (engine_.IsPlayerDead()) {
       live_lost_num_frames_++;
     } else {
@@ -65,7 +78,7 @@ void DigDugApp::update() {
 void DigDugApp::keyDown(KeyEvent event) {
   switch (event.getCode()) {
     case KeyEvent::KEY_SPACE:
-        engine_.AttackEnemy();
+      engine_.AttackEnemy();
       break;
 
     case KeyEvent::KEY_RIGHT:
@@ -82,6 +95,13 @@ void DigDugApp::keyDown(KeyEvent event) {
 
     case KeyEvent::KEY_UP:
       engine_.MovePlayer({0, -1});
+      break;
+
+    case KeyEvent::KEY_RETURN:
+      generator_ = GameStateGenerator();
+      generator_.Generate();
+      engine_ = GameEngine(generator_.GetGameMap(), kTileSize);
+      is_game_over_ = false;
       break;
   }
 }
