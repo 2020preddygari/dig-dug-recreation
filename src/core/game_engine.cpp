@@ -74,8 +74,7 @@ void GameEngine::MovePlayer(const vec2& velocity) {
   is_attacking_ = false;
   
   for (size_t index = 0; index < enemies_.size(); index++) {
-    Enemy& enemy = enemies_[index];
-    enemy.SetIsHurt(false);
+   enemies_[index].SetIsHurt(false);
   }
 
   const vec2 kZeroVelocity {0, 0};
@@ -345,6 +344,10 @@ void GameEngine::CreateHarpoon() {
 }
 
 int GameEngine::GetHurtEnemy() {
+  if (!is_attacking_) {
+    return -1;
+  }
+
   for (size_t index = 0; index < enemies_.size(); index++) {
     Enemy& enemy = enemies_[index];
     vec2 enemy_pos = enemy.GetPosition();

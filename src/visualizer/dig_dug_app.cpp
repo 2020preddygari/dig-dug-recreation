@@ -63,7 +63,7 @@ void DigDugApp::update() {
 void DigDugApp::keyDown(KeyEvent event) {
   switch (event.getCode()) {
     case KeyEvent::KEY_SPACE:
-      engine_.AttackEnemy();
+        engine_.AttackEnemy();
       break;
 
     case KeyEvent::KEY_RIGHT:
