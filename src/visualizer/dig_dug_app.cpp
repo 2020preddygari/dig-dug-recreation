@@ -17,7 +17,9 @@ void DigDugApp::draw() {
                                                       kMargin + kBoardToWindowRatio * kWindowSize});
   ci::gl::color(ci::Color("white"));
   ci::gl::drawStrokedRect(game_board_background);
-
+  ci::gl::drawStringCentered("Level " + std::to_string(generator_.GetLevel()),
+                             {kWindowSize / 2, kMargin / 4}, ci::Color("white"),
+                             ci::Font("Helvetica Neue", (float) (kMargin * 3 / 4)));
 
   DrawLives();
   DrawBoard();
@@ -26,6 +28,15 @@ void DigDugApp::draw() {
 }
 
 void DigDugApp::update() {
+  vector<Enemy> enemies = engine_.GetEnemies();
+
+  if (enemies.empty()) {
+    live_lost_num_frames_ = 0;
+    generator_.IncreaseLevel();
+    generator_.Generate();
+    engine_ = GameEngine(generator_.GetGameMap(), kTileSize);
+  }
+
   if (engine_.GetLives() > 0 && live_lost_num_frames_ == 0) {
     if (engine_.IsPlayerDead()) {
       live_lost_num_frames_++;

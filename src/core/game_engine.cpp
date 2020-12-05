@@ -87,7 +87,7 @@ void GameEngine::MovePlayer(const vec2& velocity) {
 
   if (is_next_tile_open) {
     // Checks if player is aligned with tile
-    if ((size_t) (position.x) % 100 == 0 && (size_t) (position.y) % 100 == 0) {
+    if ((size_t) (position.x) % tile_size_ == 0 && (size_t) (position.y) % tile_size_ == 0) {
       // Check if player tried to turn in the middle of tiles, and performs that move if so
       if ((velocity_with_speed == player_prev_speed || velocity_with_speed == kZeroVelocity)
           && delayed_turn_velocity_ != kZeroVelocity) {
