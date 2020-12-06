@@ -273,14 +273,14 @@ bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) cons
 bool GameEngine::IsNextTileOpen(const vec2 &velocity, const vec2 &position) const {
   if (velocity.x > 0 && velocity.y == 0) {
     size_t next_x = (size_t) (position.x) + (size_t) (velocity.x) + tile_size_;
-    if (next_x <= game_map_.size() * tile_size_
+    if (next_x < game_map_.size() * tile_size_
         && game_map_[next_x / tile_size_][(size_t) (position.y) / tile_size_] != TileType::Rock) {
       return true;
     }
 
   } else if (velocity.x == 0 && velocity.y > 0) {
     size_t next_y = (size_t) (position.y) + (size_t) (velocity.y) + tile_size_;
-    if (next_y <= game_map_.size() * tile_size_
+    if (next_y < game_map_.size() * tile_size_
         && game_map_[(size_t) (position.x) / tile_size_][next_y / tile_size_] != TileType::Rock) {
       return true;
     }
