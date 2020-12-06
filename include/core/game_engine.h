@@ -70,6 +70,10 @@ class GameEngine {
 
   Harpoon GetHarpoon();
 
+  size_t GetScore();
+
+  void SetScore(size_t score);
+
  private:
   vector<vector<TileType>> game_map_;
   Player player_;
@@ -82,6 +86,7 @@ class GameEngine {
   size_t cur_attack_frames_ = 0;
   size_t max_harpoon_traveling_frames_;
   vec2 delayed_turn_velocity_ {0, 0};
+  size_t score_ = 0;
   constexpr static double kPlayerSpeed = 10;
   constexpr static double kEnemySpeed = 4;
   constexpr static double kEnemyDifficulty = 0.01;
@@ -89,6 +94,7 @@ class GameEngine {
   const static size_t kAttackFrames = 20;
   const static size_t kHarpoonLength = 10;
   const static size_t kHarpoonSpeed = 20;
+  const static size_t kEnemyKillScore = 100;
 
   /**
    * Moves a normal, walking enemy

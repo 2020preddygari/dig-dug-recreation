@@ -50,6 +50,7 @@ using ci::app::KeyEvent;
    const double kWindowSize = 2000;
    const double kMargin = 100;
    const double kBoardToWindowRatio = 0.75;
+   const size_t kLevelUpScore = 200;
 
    const Texture2dRef kDirtTexture = Texture2d::create(loadImage("../../../images/dirt_block.png"));
    const Texture2dRef kRockTexture = Texture2d::create(loadImage("../../../images/rock.png"));

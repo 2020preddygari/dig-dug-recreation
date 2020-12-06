@@ -14,6 +14,7 @@ void DigDugApp::draw() {
   ci::Color8u background_color(0, 0, 0);
   ci::gl::clear(background_color);
 
+  // Draws the game over screen
   if (is_game_over_) {
     ci::gl::drawStringCentered("Game Over",
                                {kWindowSize / 2, kWindowSize * 3 / 8}, ci::Color("red"),
@@ -29,6 +30,9 @@ void DigDugApp::draw() {
     ci::gl::drawStringCentered("Level " + std::to_string(generator_.GetLevel()),
                                {kWindowSize / 2, kMargin / 4}, ci::Color("white"),
                                ci::Font("Helvetica Neue", (float) (kMargin * 3 / 4)));
+    ci::gl::drawStringCentered("Score: " + std::to_string(engine_.GetScore()),
+                               {kWindowSize - (kWindowSize - kWindowSize * kBoardToWindowRatio) / 2, kWindowSize * 3 / 8},
+                               ci::Color("white"), ci::Font("Helvetica Neue", (float) (kMargin * 3 / 4)));
 
     DrawLives();
     DrawBoard();
@@ -46,11 +50,13 @@ void DigDugApp::update() {
 
   if (enemies.empty()) {
     size_t num_lives = engine_.GetNumLives();
+    size_t score = engine_.GetScore();
     live_lost_num_frames_ = 0;
     generator_.IncreaseLevel();
     generator_.Generate();
     engine_ = GameEngine(generator_.GetGameMap(), kTileSize);
     engine_.SetNumLives(num_lives);
+    engine_.SetScore(score + kLevelUpScore);
 
   } else if (engine_.GetNumLives() > 0 && live_lost_num_frames_ == 0) {
     if (engine_.IsPlayerDead()) {
@@ -65,9 +71,11 @@ void DigDugApp::update() {
     if (live_lost_num_frames_ > kMaxLiveLostFrames) {
       live_lost_num_frames_ = 0;
       size_t new_lives = engine_.GetNumLives();
+      size_t score = engine_.GetScore();
       generator_.Generate();
       engine_ = GameEngine(generator_.GetGameMap(), kTileSize);
       engine_.SetNumLives(new_lives);
+      engine_.SetScore(score);
     }
 
   } else {

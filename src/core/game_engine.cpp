@@ -148,6 +148,7 @@ void GameEngine::AttackEnemy() {
       enemies_.erase(enemies_.begin() + hurt_enemy_index);
       cur_attack_frames_ = 0;
       is_attacking_ = false;
+      score_ += kEnemyKillScore;
     }
 
   } else if (harpoon_.GetDistanceTraveled() >= max_harpoon_traveling_frames_) {
@@ -184,6 +185,14 @@ bool GameEngine::GetIsAttacking() {
 
 Harpoon GameEngine::GetHarpoon() {
   return harpoon_;
+}
+
+size_t GameEngine::GetScore() {
+  return score_;
+}
+
+void GameEngine::SetScore(size_t score) {
+  score_ = score;
 }
 
 void GameEngine::MoveWalkingEnemy(Enemy& enemy) {
