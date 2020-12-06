@@ -159,19 +159,19 @@ void GameEngine::AttackEnemy() {
   }
 }
 
-vector<vector<TileType>> GameEngine::GetGameMap() {
+vector<vector<TileType>> GameEngine::GetGameMap() const {
   return game_map_;
 }
 
-Player GameEngine::GetPlayer() {
+Player GameEngine::GetPlayer() const {
   return player_;
 }
 
-vector<Enemy> GameEngine::GetEnemies() {
+vector<Enemy> GameEngine::GetEnemies() const {
   return enemies_;
 }
 
-size_t GameEngine::GetNumLives() {
+size_t GameEngine::GetNumLives() const {
   return num_lives_;
 }
 
@@ -179,15 +179,15 @@ void GameEngine::SetNumLives(size_t num_lives) {
   num_lives_ = num_lives;
 }
 
-bool GameEngine::GetIsAttacking() {
+bool GameEngine::GetIsAttacking() const {
   return is_attacking_;
 }
 
-Harpoon GameEngine::GetHarpoon() {
+Harpoon GameEngine::GetHarpoon() const {
   return harpoon_;
 }
 
-size_t GameEngine::GetScore() {
+size_t GameEngine::GetScore() const {
   return score_;
 }
 
@@ -195,7 +195,7 @@ void GameEngine::SetScore(size_t score) {
   score_ = score;
 }
 
-void GameEngine::MoveWalkingEnemy(Enemy& enemy) {
+void GameEngine::MoveWalkingEnemy(Enemy& enemy) const {
   vec2 cur_position = enemy.GetPosition();
   vec2 cur_velocity = enemy.GetVelocity();
 
@@ -236,7 +236,7 @@ void GameEngine::MoveWalkingEnemy(Enemy& enemy) {
   }
 }
 
-bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) {
+bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) const {
   if (!IsNextTileOpen(velocity, position)) {
     return false;
   }
@@ -268,7 +268,7 @@ bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) {
   return false;
 }
 
-bool GameEngine::IsNextTileOpen(const vec2 &velocity, const vec2 &position) {
+bool GameEngine::IsNextTileOpen(const vec2 &velocity, const vec2 &position) const {
   if (velocity.x > 0 && velocity.y == 0) {
     size_t next_x = (size_t) (position.x) + (size_t) (velocity.x) + tile_size_;
     if (next_x <= game_map_.size() * tile_size_
@@ -299,7 +299,7 @@ bool GameEngine::IsNextTileOpen(const vec2 &velocity, const vec2 &position) {
   return false;
 }
 
-void GameEngine::MoveGhostedEnemy(Enemy& enemy) {
+void GameEngine::MoveGhostedEnemy(Enemy& enemy) const {
   vec2 enemy_position = enemy.GetPosition();
   vec2 player_position = player_.GetPosition();
   vec2 distance_vector = player_position - enemy_position;
@@ -352,18 +352,17 @@ void GameEngine::CreateHarpoon() {
   harpoon_ = Harpoon(player_position, harpoon_velocity);
 }
 
-int GameEngine::GetHurtEnemy() {
+int GameEngine::GetHurtEnemy() const {
   if (!is_attacking_) {
     return -1;
   }
 
   for (size_t index = 0; index < enemies_.size(); index++) {
-    Enemy& enemy = enemies_[index];
-    vec2 enemy_pos = enemy.GetPosition();
+    vec2 enemy_pos = enemies_[index].GetPosition();
     vec2 harpoon_pos = harpoon_.GetArrowPosition();
     double distance = glm::length(enemy_pos - harpoon_pos);
 
-    if (!enemy.GetIsGhost() && distance < tile_size_) {
+    if (!enemies_[index].GetIsGhost() && distance < tile_size_) {
       return index;
     }
   }
@@ -371,7 +370,7 @@ int GameEngine::GetHurtEnemy() {
   return -1;
 }
 
-size_t GameEngine::GetIndexOfPlayer(size_t position) {
+size_t GameEngine::GetIndexOfPlayer(size_t position) const {
   size_t new_pixel_position = position + tile_size_;
   size_t new_index;
 

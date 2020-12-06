@@ -56,21 +56,21 @@ class GameEngine {
    */
   void AttackEnemy();
 
-  vector<vector<TileType>> GetGameMap();
+  vector<vector<TileType>> GetGameMap() const;
 
-  Player GetPlayer();
+  Player GetPlayer() const;
 
-  vector<Enemy> GetEnemies();
+  vector<Enemy> GetEnemies() const;
 
-  size_t GetNumLives();
+  size_t GetNumLives() const;
 
   void SetNumLives(size_t num_lives);
 
-  bool GetIsAttacking();
+  bool GetIsAttacking() const;
 
-  Harpoon GetHarpoon();
+  Harpoon GetHarpoon() const;
 
-  size_t GetScore();
+  size_t GetScore() const;
 
   void SetScore(size_t score);
 
@@ -101,7 +101,7 @@ class GameEngine {
    *
    * @param enemy
    */
-  void MoveWalkingEnemy(Enemy& enemy);
+  void MoveWalkingEnemy(Enemy& enemy) const;
 
   /**
    * Checks whether the next tile along the object's path is dirt
@@ -110,7 +110,7 @@ class GameEngine {
    * @param position position of object
    * @return true if next tile is dirt, false otherwise
    */
-  bool IsNextTileDirt(const vec2& velocity, const vec2& position);
+  bool IsNextTileDirt(const vec2& velocity, const vec2& position) const;
 
   /**
    * Checks whether the next tile along the object's path is within the bounds of the board
@@ -119,14 +119,14 @@ class GameEngine {
    * @param position position of object
    * @return true if next tile is allowed, false otherwise
    */
-  bool IsNextTileOpen(const vec2& velocity, const vec2& position);
+  bool IsNextTileOpen(const vec2& velocity, const vec2& position) const;
 
   /**
    * Moves a ghosted enemy that can go through dirt
    *
    * @param enemy
    */
-  void MoveGhostedEnemy(Enemy& enemy);
+  void MoveGhostedEnemy(Enemy& enemy) const;
 
   /**
    * Turns the dirt tiles that the player enters into tunnels
@@ -146,7 +146,7 @@ class GameEngine {
    *
    * @return index of enemy, or -1 if harpoon not hurting anything
    */
-  int GetHurtEnemy();
+  int GetHurtEnemy() const;
 
   /**
    * Gets the index on the game board of a player's position in pixels
@@ -154,6 +154,6 @@ class GameEngine {
    * @param position player position
    * @return index on gameboard
    */
-  size_t GetIndexOfPlayer(size_t position);
+  size_t GetIndexOfPlayer(size_t position) const;
 };
 } // namespace dig_dug

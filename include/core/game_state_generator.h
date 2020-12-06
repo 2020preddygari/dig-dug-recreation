@@ -68,7 +68,7 @@ class GameStateGenerator {
    * @param y_pos y position
    * @return true if it is a good spot, false if not
    */
-  bool IsGoodSpot(size_t x_pos, size_t y_pos);
+  bool IsGoodSpot(size_t x_pos, size_t y_pos) const;
 
   /**
    * Checks whether given coordinate contains a fygar, pooka, or tunnel
@@ -77,7 +77,7 @@ class GameStateGenerator {
    * @param y_pos y position
    * @return true if there is an enemy, false if not
    */
-  bool IsEnemyOrTunnel(size_t x_pos, size_t y_pos);
+  bool IsEnemyOrTunnel(size_t x_pos, size_t y_pos) const;
 
   /**
    * Checks whether space is possible for an enemy and adds it if it is possible

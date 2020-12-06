@@ -21,15 +21,15 @@ void Player::Move(const vec2& velocity) {
   }
 }
 
-vec2 Player::GetPosition() {
+vec2 Player::GetPosition() const {
   return position_;
 }
 
-vec2 Player::GetPrevVelocity() {
+vec2 Player::GetPrevVelocity() const {
   return prev_velocity_;
 }
 
-CharacterOrientation Player::GetOrientation() {
+CharacterOrientation Player::GetOrientation() const {
   return orientation_;
 }
 

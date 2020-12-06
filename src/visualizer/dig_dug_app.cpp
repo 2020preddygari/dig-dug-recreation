@@ -114,7 +114,7 @@ void DigDugApp::keyDown(KeyEvent event) {
   }
 }
 
-void DigDugApp::DrawBoard() {
+void DigDugApp::DrawBoard() const {
   vector<vector<TileType>> game_map = engine_.GetGameMap();
   size_t size = game_map.size();
 
@@ -136,7 +136,7 @@ void DigDugApp::DrawBoard() {
   }
 }
 
-void DigDugApp::DrawPlayer() {
+void DigDugApp::DrawPlayer() const {
   Player player = engine_.GetPlayer();
   vec2 position = player.GetPosition();
 
@@ -154,7 +154,7 @@ void DigDugApp::DrawPlayer() {
   }
 }
 
-void DigDugApp::DrawEnemies() {
+void DigDugApp::DrawEnemies() const {
   vector<Enemy> enemies = engine_.GetEnemies();
 
   for (Enemy enemy : enemies)  {
@@ -184,7 +184,7 @@ void DigDugApp::DrawEnemies() {
   }
 }
 
-void DigDugApp::DrawHarpoon() {
+void DigDugApp::DrawHarpoon() const {
   Player player = engine_.GetPlayer();
   vec2 position = player.GetPosition();
 
@@ -214,7 +214,7 @@ void DigDugApp::DrawHarpoon() {
   }
 }
 
-void DigDugApp::DrawLives() {
+void DigDugApp::DrawLives() const {
   const size_t kPlayerWidth = 90;
   const size_t kPlayerHeight = 90;
   double end_of_game_board = kMargin + kBoardToWindowRatio * kWindowSize;

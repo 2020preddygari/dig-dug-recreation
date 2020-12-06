@@ -49,7 +49,6 @@ vector<vector<TileType>> GameStateGenerator::GetGameMap() const {
 }
 
 void GameStateGenerator::GenerateEnemies(size_t num_enemies) {
-  TileType cur_enemy = TileType::Pooka;
   size_t mid_value = static_cast<int>(kBoardDimension_ / 2);
 
   for (size_t num = 0; num < num_enemies; num++) {
@@ -93,7 +92,7 @@ void GameStateGenerator::GenerateRocks(size_t num_rocks) {
   }
 }
 
-bool GameStateGenerator::IsGoodSpot(size_t x_pos, size_t y_pos) {
+bool GameStateGenerator::IsGoodSpot(size_t x_pos, size_t y_pos) const {
   // Checks if there is an enemy or tunnel in a (kEnemyBuffer)-block radius of the current coordinate
   if (IsEnemyOrTunnel(x_pos + kEnemyBuffer, y_pos)
       || IsEnemyOrTunnel(x_pos + kEnemyBuffer, y_pos + kEnemyBuffer)
@@ -109,7 +108,7 @@ bool GameStateGenerator::IsGoodSpot(size_t x_pos, size_t y_pos) {
   return true;
 }
 
-bool GameStateGenerator::IsEnemyOrTunnel(size_t x_pos, size_t y_pos) {
+bool GameStateGenerator::IsEnemyOrTunnel(size_t x_pos, size_t y_pos) const {
   if (x_pos < 0 || x_pos >= kBoardDimension_ || y_pos < 0 || y_pos >= kBoardDimension_) {
     return false;
   }

@@ -28,11 +28,11 @@ class Player {
    */
   void Move(const vec2& velocity);
 
-  vec2 GetPosition();
+  vec2 GetPosition() const;
 
-  vec2 GetPrevVelocity();
+  vec2 GetPrevVelocity() const;
 
-  CharacterOrientation GetOrientation();
+  CharacterOrientation GetOrientation() const;
 
  private:
   constexpr static double kSpeed = 5;

@@ -22,27 +22,27 @@ class Enemy {
    */
   void Move();
 
-  vec2 GetPosition();
+  vec2 GetPosition() const;
 
   void SetPosition(const vec2& position);
 
-  vec2 GetVelocity();
+  vec2 GetVelocity() const;
 
   void SetVelocity(const vec2& velocity);
 
-  bool GetIsGhost();
+  bool GetIsGhost() const;
 
   void SetIsGhost();
 
-  TileType GetType();
+  TileType GetType() const;
 
-  bool GetIsHurt();
+  bool GetIsHurt() const;
 
   void SetIsHurt(bool val);
 
-  CharacterOrientation GetOrientation();
+  CharacterOrientation GetOrientation() const;
 
-  bool GetIsInDirt();
+  bool GetIsInDirt() const;
 
   void SetIsInDirt(bool in_dirt);
 

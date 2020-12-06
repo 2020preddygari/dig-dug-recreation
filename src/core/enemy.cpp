@@ -12,7 +12,7 @@ void Enemy::Move() {
   position_ += velocity_;
 }
 
-vec2 Enemy::GetPosition() {
+vec2 Enemy::GetPosition() const {
   return position_;
 }
 
@@ -20,7 +20,7 @@ void Enemy::SetPosition(const vec2& position) {
   position_ = position;
 }
 
-vec2 Enemy::GetVelocity() {
+vec2 Enemy::GetVelocity() const {
   return velocity_;
 }
 
@@ -34,7 +34,7 @@ void Enemy::SetVelocity(const vec2& velocity) {
   }
 }
 
-bool Enemy::GetIsGhost() {
+bool Enemy::GetIsGhost() const {
   return is_ghost_;
 }
 
@@ -46,11 +46,11 @@ void Enemy::SetIsGhost() {
   }
 }
 
-TileType Enemy::GetType() {
+TileType Enemy::GetType() const {
   return type_;
 }
 
-bool Enemy::GetIsHurt() {
+bool Enemy::GetIsHurt() const {
   return is_hurt_;
 }
 
@@ -58,11 +58,11 @@ void Enemy::SetIsHurt(bool val) {
   is_hurt_ = val;
 }
 
-CharacterOrientation Enemy::GetOrientation() {
+CharacterOrientation Enemy::GetOrientation() const{
   return orientation_;
 }
 
-bool Enemy::GetIsInDirt() {
+bool Enemy::GetIsInDirt() const {
   return is_in_dirt_;
 }
 

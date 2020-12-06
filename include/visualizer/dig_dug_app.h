@@ -70,26 +70,26 @@ using ci::app::KeyEvent;
    /**
     * Draws the dirt tiles, tunnels, and rocks
     */
-   void DrawBoard();
+   void DrawBoard() const;
 
    /**
     * Draws the player and the harpoon
     */
-   void DrawPlayer();
+   void DrawPlayer() const;
 
    /**
     * Draws the enemies
     */
-   void DrawEnemies();
+   void DrawEnemies() const;
 
    /**
     * Draws the harpoon
     */
-   void DrawHarpoon();
+   void DrawHarpoon() const;
 
    /**
     * Draws the number of lives the player has
     */
-   void DrawLives();
+   void DrawLives() const;
 };
 }
