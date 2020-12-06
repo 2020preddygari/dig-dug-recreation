@@ -155,5 +155,12 @@ class GameEngine {
    * @return index on gameboard
    */
   size_t GetIndexOfPlayer(size_t position) const;
+
+  /**
+   * Checks whether the harpoon can continue in the direction it is going in
+   *
+   * @return true if harpoon can continue, false otherwise
+   */
+  bool CanHarpoonContinue() const;
 };
 } // namespace dig_dug

@@ -138,6 +138,7 @@ void GameEngine::AttackEnemy() {
 
   }
 
+  vec2 arrow_position = harpoon_.GetArrowPosition();
   int hurt_enemy_index = GetHurtEnemy();
   if (hurt_enemy_index > -1) {
     cur_attack_frames_++;
@@ -151,7 +152,8 @@ void GameEngine::AttackEnemy() {
       score_ += kEnemyKillScore;
     }
 
-  } else if (harpoon_.GetDistanceTraveled() >= max_harpoon_traveling_frames_) {
+  } else if (harpoon_.GetDistanceTraveled() >= max_harpoon_traveling_frames_
+            || !CanHarpoonContinue()) {
     is_attacking_ = false;
 
   } else {
@@ -382,6 +384,34 @@ size_t GameEngine::GetIndexOfPlayer(size_t position) const {
   }
 
   return new_index;
+}
+
+bool GameEngine::CanHarpoonContinue() const {
+  vec2 arrow_pos = harpoon_.GetArrowPosition();
+  vec2 harpoon_velocity = harpoon_.GetVelocity();
+  vec2 unit_harpoon_velocity = harpoon_velocity / glm::length(harpoon_velocity);
+  vec2 next_pos = arrow_pos;
+
+  if (harpoon_velocity.x > 0 || harpoon_velocity.y > 0) {
+    next_pos.x += unit_harpoon_velocity.x * tile_size_;
+    next_pos.y += unit_harpoon_velocity.y * tile_size_;
+  }
+
+  size_t arrow_x = (size_t) (arrow_pos.x) / tile_size_;
+  size_t arrow_y = (size_t) (arrow_pos.y) / tile_size_;
+  size_t next_x = (size_t) (next_pos.x) / tile_size_;
+  size_t next_y = (size_t) (next_pos.y) / tile_size_;
+
+  if (arrow_pos.x >= 0 && arrow_x < game_map_.size()
+      && arrow_pos.y >= 0 && arrow_y < game_map_.size()
+      && next_pos.x >= 0 && next_x < game_map_.size()
+      && next_pos.y >= 0 && next_y < game_map_.size()
+      && game_map_[arrow_x][arrow_y] == TileType::Tunnel
+      && game_map_[next_x][next_y] == TileType::Tunnel) {
+    return true;
+  }
+
+  return false;
 }
 
 } // namespace dig_dug
