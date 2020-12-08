@@ -8,13 +8,13 @@ This game is a recreation of Dig Dug, a retro game where you dig around the map 
 
 ### Dependencies
 
-You must have Microsoft Visual Studio 2017 on Microsoft Windows to build this project
+You must have [Microsoft Visual Studio 2017](https://visualstudio.microsoft.com/vs/older-downloads/) on Microsoft Windows to build this project
 
-* cmake
+* [cmake](https://cmake.org/download/)
 
-* Cinder
+* [Cinder](https://libcinder.org/download)
 
-* Catch2
+* [Catch2](https://github.com/catchorg/Catch2)
 
 ### How to Run
 
