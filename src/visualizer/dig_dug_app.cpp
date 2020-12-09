@@ -29,7 +29,7 @@ void DigDugApp::draw() {
   ci::gl::clear(background_color);
 
   // Draws the game over screen
-  if (is_game_over_) {
+  if (game_over_) {
     ci::gl::drawStringCentered("Game Over",
                                {kWindowSize / kGameOverScreenXFraction, kWindowSize * kGameOverScreenYFraction},
                                ci::Color("red"),
@@ -63,7 +63,7 @@ void DigDugApp::draw() {
 }
 
 void DigDugApp::update() {
-  if (is_game_over_) {
+  if (game_over_) {
     return;
   }
 
@@ -100,7 +100,7 @@ void DigDugApp::update() {
     }
 
   } else {
-    is_game_over_ = true;
+    game_over_ = true;
   }
 }
 
@@ -135,7 +135,7 @@ void DigDugApp::keyDown(KeyEvent event) {
       generator_ = GameStateGenerator();
       generator_.Generate();
       engine_ = GameEngine(generator_.GetGameMap(), kTileSize);
-      is_game_over_ = false;
+      game_over_ = false;
       break;
   }
 }
@@ -176,7 +176,7 @@ void DigDugApp::DrawPlayer() const {
     ci::gl::draw(kPlayerLeftTexture, player_rect);
   }
 
-  if (engine_.GetIsAttacking()) {
+  if (engine_.IsPlayerAttacking()) {
     DrawHarpoon();
   }
 }
@@ -191,7 +191,7 @@ void DigDugApp::DrawEnemies() const {
     Rectf enemy_rect({position.x + kMargin, position.y + kMargin},
                      {position.x + kTileSize + kMargin, position.y + kTileSize + kMargin});
 
-    if (enemy.GetIsGhost()) {
+    if (enemy.IsGhost()) {
       ci::gl::draw(kGhostTexture, enemy_rect);
 
     } else if (type == TileType::Fygar) {

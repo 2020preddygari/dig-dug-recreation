@@ -46,21 +46,21 @@ void GameEngine::MoveEnemies() {
     size_t ghost_index = rand() % enemies_.size();
     Enemy& cur_enemy = enemies_[ghost_index];
     
-    if (!cur_enemy.GetIsGhost()) {
-      cur_enemy.SetIsGhost();
+    if (!cur_enemy.IsGhost()) {
+      cur_enemy.SetGhost();
     }
   }
 
   int enemy_hurt_index = GetHurtEnemy();
   if (enemy_hurt_index > -1) {
-    enemies_[enemy_hurt_index].SetIsHurt(true);
+    enemies_[enemy_hurt_index].SetHurt(true);
   }
 
   for (size_t index = 0; index < enemies_.size(); index++) {
     Enemy& cur_enemy = enemies_[index];
 
-    if (!cur_enemy.GetIsHurt()) {
-      if (cur_enemy.GetIsGhost()) {
+    if (!cur_enemy.IsHurt()) {
+      if (cur_enemy.IsGhost()) {
         MoveGhostedEnemy(cur_enemy);
       
       } else {
@@ -75,10 +75,10 @@ void GameEngine::MoveEnemies() {
 void GameEngine::MovePlayer(const vec2& velocity) {
   // Resets all attack fields because no enemy is being attacked if the player is moving
   cur_attack_frames_ = 0;
-  is_attacking_ = false;
+  player_attacking_ = false;
   
   for (size_t index = 0; index < enemies_.size(); index++) {
-   enemies_[index].SetIsHurt(false);
+   enemies_[index].SetHurt(false);
   }
 
   const vec2 kZeroVelocity {0, 0};
@@ -86,9 +86,9 @@ void GameEngine::MovePlayer(const vec2& velocity) {
   vec2 velocity_with_speed {velocity.x * kPlayerSpeed, velocity.y * kPlayerSpeed};
   vec2 opposite_velocity {velocity_with_speed.x * -1, velocity_with_speed.y * -1};
   vec2 player_prev_speed = player_.GetPrevVelocity();
-  bool is_next_tile_open = IsNextTileOpen(velocity_with_speed, player_.GetPosition());
+  bool next_tile_open = IsNextTileOpen(velocity_with_speed, player_.GetPosition());
 
-  if (is_next_tile_open) {
+  if (next_tile_open) {
     // Checks if player is aligned with tile
     if ((size_t) (position.x) % tile_size_ == 0 && (size_t) (position.y) % tile_size_ == 0) {
       // Check if player tried to turn in the middle of tiles, and performs that move if so
@@ -126,7 +126,7 @@ bool GameEngine::IsPlayerDead() {
     vec2 player_pos = player_.GetPosition();
     double distance = glm::length(enemy_pos - player_pos);
 
-    if (!enemy.GetIsGhost() && distance < tile_size_) {
+    if (!enemy.IsGhost() && distance < tile_size_) {
       num_lives_--;
       return true;
     }
@@ -136,9 +136,9 @@ bool GameEngine::IsPlayerDead() {
 }
 
 void GameEngine::AttackEnemy() {
-  if (!is_attacking_) {
+  if (!player_attacking_) {
     CreateHarpoon();
-    is_attacking_ = true;
+    player_attacking_ = true;
 
   }
 
@@ -146,19 +146,19 @@ void GameEngine::AttackEnemy() {
   int hurt_enemy_index = GetHurtEnemy();
   if (hurt_enemy_index > -1) {
     cur_attack_frames_++;
-    enemies_[hurt_enemy_index].SetIsHurt(true);
+    enemies_[hurt_enemy_index].SetHurt(true);
 
     // Enemy dies
     if (cur_attack_frames_ >= kAttackFrames) {
       enemies_.erase(enemies_.begin() + hurt_enemy_index);
       cur_attack_frames_ = 0;
-      is_attacking_ = false;
+      player_attacking_ = false;
       score_ += kEnemyKillScore;
     }
 
   } else if (harpoon_.GetDistanceTraveled() >= max_harpoon_traveling_frames_
             || !CanHarpoonContinue()) {
-    is_attacking_ = false;
+    player_attacking_ = false;
 
   } else {
     harpoon_.Move();
@@ -185,8 +185,8 @@ void GameEngine::SetNumLives(size_t num_lives) {
   num_lives_ = num_lives;
 }
 
-bool GameEngine::GetIsAttacking() const {
-  return is_attacking_;
+bool GameEngine::IsPlayerAttacking() const {
+  return player_attacking_;
 }
 
 Harpoon GameEngine::GetHarpoon() const {
@@ -313,13 +313,13 @@ void GameEngine::MoveGhostedEnemy(Enemy& enemy) const {
   TileType tile = game_map_[(size_t) (enemy_position.x) / tile_size_][(size_t) (enemy_position.y) / tile_size_];
   
   if (tile == TileType::Dirt || tile == TileType::Rock) {
-    enemy.SetIsInDirt(true);
+    enemy.SetInDirt(true);
   }
 
   // Enemy walks again and is not ghost anymore
   if (tile == TileType::Tunnel
-      && distance < kGhostDistanceBuffer && enemy.GetIsInDirt()) {
-    enemy.SetIsGhost();
+      && distance < kGhostDistanceBuffer && enemy.IsInDirt()) {
+    enemy.SetGhost();
     enemy.SetPosition({((size_t) (enemy_position.x) / tile_size_) * tile_size_,
                        ((size_t) (enemy_position.y) / tile_size_) * tile_size_});
     // Makes sure velocity of enemy is correct now that it is walking again
@@ -359,7 +359,7 @@ void GameEngine::CreateHarpoon() {
 }
 
 int GameEngine::GetHurtEnemy() const {
-  if (!is_attacking_) {
+  if (!player_attacking_) {
     return -1;
   }
 
@@ -368,7 +368,7 @@ int GameEngine::GetHurtEnemy() const {
     vec2 harpoon_pos = harpoon_.GetArrowPosition();
     double distance = glm::length(enemy_pos - harpoon_pos);
 
-    if (!enemies_[index].GetIsGhost() && distance < tile_size_) {
+    if (!enemies_[index].IsGhost() && distance < tile_size_) {
       return index;
     }
   }

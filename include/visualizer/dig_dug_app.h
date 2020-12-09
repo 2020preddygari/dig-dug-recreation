@@ -43,7 +43,7 @@ using ci::app::KeyEvent;
    GameStateGenerator generator_;
    GameEngine engine_;
    size_t live_lost_num_frames_ = 0;
-   bool is_game_over_ = false;
+   bool game_over_ = false;
 
    const size_t kTileSize = 100;
    const size_t kMaxLiveLostFrames = 100;

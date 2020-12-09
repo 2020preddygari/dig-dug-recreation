@@ -30,28 +30,28 @@ class Enemy {
 
   void SetVelocity(const vec2& velocity);
 
-  bool GetIsGhost() const;
+  bool IsGhost() const;
 
-  void SetIsGhost();
+  void SetGhost();
 
   TileType GetType() const;
 
-  bool GetIsHurt() const;
+  bool IsHurt() const;
 
-  void SetIsHurt(bool val);
+  void SetHurt(bool val);
 
   CharacterOrientation GetOrientation() const;
 
-  bool GetIsInDirt() const;
+  bool IsInDirt() const;
 
-  void SetIsInDirt(bool in_dirt);
+  void SetInDirt(bool in_dirt);
 
  private:
   vec2 position_;
   vec2 velocity_;
-  bool is_ghost_ = false;
-  bool is_in_dirt_ = false;
-  bool is_hurt_ = false;
+  bool ghost_ = false;
+  bool in_dirt_ = false;
+  bool hurt_ = false;
   TileType type_;
   CharacterOrientation orientation_ = CharacterOrientation::Right;
 };

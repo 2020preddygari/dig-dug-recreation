@@ -66,7 +66,7 @@ class GameEngine {
 
   void SetNumLives(size_t num_lives);
 
-  bool GetIsAttacking() const;
+  bool IsPlayerAttacking() const;
 
   Harpoon GetHarpoon() const;
 
@@ -80,7 +80,7 @@ class GameEngine {
   vector<Enemy> enemies_;
   Harpoon harpoon_;
 
-  bool is_attacking_ = false;
+  bool player_attacking_ = false;
   double enemy_ghost_percentage_;
   size_t tile_size_;
   size_t num_lives_ = 3;
