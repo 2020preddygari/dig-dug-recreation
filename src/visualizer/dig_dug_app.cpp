@@ -3,7 +3,7 @@
 namespace dig_dug {
 
 DigDugApp::DigDugApp() {
-  srand(1);
+  srand((unsigned int) (time(0)));
   ci::app::setWindowSize((int) (kWindowSize), (int) (kWindowSize));
 
   generator_.Generate();
@@ -31,12 +31,12 @@ void DigDugApp::draw() {
   // Draws the game over screen
   if (game_over_) {
     ci::gl::drawStringCentered("Game Over",
-                               {kWindowSize / kGameOverScreenXFraction, kWindowSize * kGameOverScreenYFraction},
+                               {kWindowSize * kGameOverScreenXFraction, kWindowSize * kGameOverScreenYFraction},
                                ci::Color("red"),
                                ci::Font("Helvetica Neue", (float) (kWindowSize * kGameOverSize)));
 
     ci::gl::drawStringCentered("Press enter to start a new game",
-                               {kWindowSize / kStartNewGameXFraction, kWindowSize * kStartNewGameYFraction},
+                               {kWindowSize * kStartNewGameXFraction, kWindowSize * kStartNewGameYFraction},
                                ci::Color("white"),
                                ci::Font("Helvetica Neue", (float) (kWindowSize * kStartNewGameSize)));
   } else {
