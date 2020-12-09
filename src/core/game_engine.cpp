@@ -6,12 +6,14 @@ namespace dig_dug {
 GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_t tile_size) {
   size_t center_coord = (initial_game_state.size() / 2) * tile_size;
   player_ = Player({center_coord, center_coord});
+  board_size_ = initial_game_state.size();
 
   // Takes enemies out of board and stores them in enemies_
   game_map_ = initial_game_state;
-  for (size_t x = 0; x < game_map_.size(); x++) {
-    for (size_t y = 0; y < game_map_.size(); y++) {
-      if (game_map_[x][y] == TileType::Pooka || game_map_[x][y] == TileType::Fygar) {
+  for (size_t x = 0; x < board_size_; x++) {
+    for (size_t y = 0; y < board_size_; y++) {
+      TileType type = game_map_[x][y];
+      if (type == TileType::Pooka || type == TileType::Fygar) {
         vec2 position {x * tile_size, y * tile_size};
 
         vec2 velocity;
@@ -21,7 +23,7 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
           velocity = {0, kEnemySpeed};
         }
 
-        Enemy enemy (position, velocity, game_map_[x][y]);
+        Enemy enemy (position, velocity, type);
         enemies_.push_back(enemy);
         game_map_[x][y] = TileType::Tunnel;
       }
@@ -35,15 +37,17 @@ GameEngine::GameEngine(const vector<vector<TileType>>& initial_game_state, size_
   enemy_ghost_percentage_ = enemies_.size() * kEnemyDifficulty;
   tile_size_ = tile_size;
   max_harpoon_traveling_frames_ = tile_size * kHarpoonLength / (size_t) (kEnemySpeed);
+  
 }
 
 void GameEngine::MoveEnemies() {
   // Turns an enemy into a ghost if random number below enemy_ghost_percentage_
   if ((size_t) (rand() % 10000) < enemy_ghost_percentage_ * 100) {
     size_t ghost_index = rand() % enemies_.size();
-
-    if (!enemies_[ghost_index].GetIsGhost()) {
-      enemies_[ghost_index].SetIsGhost();
+    Enemy& cur_enemy = enemies_[ghost_index];
+    
+    if (!cur_enemy.GetIsGhost()) {
+      cur_enemy.SetIsGhost();
     }
   }
 
@@ -117,7 +121,7 @@ void GameEngine::MovePlayer(const vec2& velocity) {
 }
 
 bool GameEngine::IsPlayerDead() {
-  for (Enemy enemy : enemies_) {
+  for (const Enemy& enemy : enemies_) {
     vec2 enemy_pos = enemy.GetPosition();
     vec2 player_pos = player_.GetPosition();
     double distance = glm::length(enemy_pos - player_pos);
@@ -273,14 +277,14 @@ bool GameEngine::IsNextTileDirt(const vec2& velocity, const vec2& position) cons
 bool GameEngine::IsNextTileOpen(const vec2 &velocity, const vec2 &position) const {
   if (velocity.x > 0 && velocity.y == 0) {
     size_t next_x = (size_t) (position.x) + (size_t) (velocity.x) + tile_size_;
-    if (next_x < game_map_.size() * tile_size_
+    if (next_x < board_size_ * tile_size_
         && game_map_[next_x / tile_size_][(size_t) (position.y) / tile_size_] != TileType::Rock) {
       return true;
     }
 
   } else if (velocity.x == 0 && velocity.y > 0) {
     size_t next_y = (size_t) (position.y) + (size_t) (velocity.y) + tile_size_;
-    if (next_y < game_map_.size() * tile_size_
+    if (next_y < board_size_ * tile_size_
         && game_map_[(size_t) (position.x) / tile_size_][next_y / tile_size_] != TileType::Rock) {
       return true;
     }
@@ -306,14 +310,14 @@ void GameEngine::MoveGhostedEnemy(Enemy& enemy) const {
   vec2 player_position = player_.GetPosition();
   vec2 distance_vector = player_position - enemy_position;
   double distance = glm::length(distance_vector);
-
-  if (game_map_[(size_t) (enemy_position.x) / tile_size_][(size_t) (enemy_position.y) / tile_size_] == TileType::Dirt ||
-      game_map_[(size_t) (enemy_position.x) / tile_size_][(size_t) (enemy_position.y) / tile_size_] == TileType::Rock) {
+  TileType tile = game_map_[(size_t) (enemy_position.x) / tile_size_][(size_t) (enemy_position.y) / tile_size_];
+  
+  if (tile == TileType::Dirt || tile == TileType::Rock) {
     enemy.SetIsInDirt(true);
   }
 
   // Enemy walks again and is not ghost anymore
-  if (game_map_[(size_t) (enemy_position.x) / tile_size_][(size_t) (enemy_position.y) / tile_size_] == TileType::Tunnel
+  if (tile == TileType::Tunnel
       && distance < kGhostDistanceBuffer && enemy.GetIsInDirt()) {
     enemy.SetIsGhost();
     enemy.SetPosition({((size_t) (enemy_position.x) / tile_size_) * tile_size_,
@@ -377,8 +381,8 @@ size_t GameEngine::GetIndexOfPlayer(size_t position) const {
   size_t new_index;
 
   // Includes boundary as part of the tile before it
-  if (new_pixel_position == game_map_.size() * tile_size_) {
-    new_index = game_map_.size() - 1;
+  if (new_pixel_position == board_size_ * tile_size_) {
+    new_index = board_size_ - 1;
   } else {
     new_index = new_pixel_position / tile_size_;
   }
@@ -402,10 +406,10 @@ bool GameEngine::CanHarpoonContinue() const {
   size_t next_x = (size_t) (next_pos.x) / tile_size_;
   size_t next_y = (size_t) (next_pos.y) / tile_size_;
 
-  if (arrow_pos.x >= 0 && arrow_x < game_map_.size()
-      && arrow_pos.y >= 0 && arrow_y < game_map_.size()
-      && next_pos.x >= 0 && next_x < game_map_.size()
-      && next_pos.y >= 0 && next_y < game_map_.size()
+  if (arrow_pos.x >= 0 && arrow_x < board_size_
+      && arrow_pos.y >= 0 && arrow_y < board_size_
+      && next_pos.x >= 0 && next_x < board_size_
+      && next_pos.y >= 0 && next_y < board_size_
       && game_map_[arrow_x][arrow_y] == TileType::Tunnel
       && game_map_[next_x][next_y] == TileType::Tunnel) {
     return true;

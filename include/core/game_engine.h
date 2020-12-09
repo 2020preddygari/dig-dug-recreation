@@ -79,6 +79,7 @@ class GameEngine {
   Player player_;
   vector<Enemy> enemies_;
   Harpoon harpoon_;
+
   bool is_attacking_ = false;
   double enemy_ghost_percentage_;
   size_t tile_size_;
@@ -87,6 +88,8 @@ class GameEngine {
   size_t max_harpoon_traveling_frames_;
   vec2 delayed_turn_velocity_ {0, 0};
   size_t score_ = 0;
+  size_t board_size_;
+
   constexpr static double kPlayerSpeed = 10;
   constexpr static double kEnemySpeed = 4;
   constexpr static double kEnemyDifficulty = 0.01;
