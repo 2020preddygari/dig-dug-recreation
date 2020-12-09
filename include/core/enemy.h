@@ -55,4 +55,5 @@ class Enemy {
   TileType type_;
   CharacterOrientation orientation_ = CharacterOrientation::Right;
 };
-}
+
+} // namespace dig_dug

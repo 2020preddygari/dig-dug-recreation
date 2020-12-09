@@ -166,4 +166,5 @@ class GameEngine {
    */
   bool CanHarpoonContinue() const;
 };
+
 } // namespace dig_dug

@@ -92,4 +92,5 @@ using ci::app::KeyEvent;
     */
    void DrawLives() const;
 };
-}
+
+} // namespace dig_dug

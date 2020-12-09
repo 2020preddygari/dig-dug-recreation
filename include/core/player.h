@@ -40,4 +40,5 @@ class Player {
   vec2 prev_velocity_ {kSpeed, 0};
   CharacterOrientation orientation_ = CharacterOrientation::Right;
 };
-}
+
+} // namespace dig_dug

@@ -33,5 +33,4 @@ CharacterOrientation Player::GetOrientation() const {
   return orientation_;
 }
 
-
 } // namespace dig_dug
